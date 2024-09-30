@@ -1,6 +1,7 @@
+import { isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Typography, Box, Tabs, Tab, TextField } from "@mui/material";
-import { FillInType, TabPanelProps } from "../interfaces";
+import { FillInType, TabPanelProps, regexAtWords } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import { demoStoryText, getUniqueRandomWord } from "./DemoText";
@@ -13,19 +14,19 @@ const MainContainer = () => {
 
   useEffect(() => {
     const newFillIns: FillInType = {};
-    const inputArray = storyTextInput.split(" ");
-    const atWords = inputArray.filter((word) => word.startsWith("@"));
-    atWords.forEach((atWord) => {
-      const existingKeys = Object.keys(newFillIns);
-      const regex: RegExp = /[\.,\/#!$%\^&\*;:{}=`~()@\+\?><\[\]\+]/g;
-      const justWord = atWord.replace(regex, "");
-      if (!existingKeys.includes(justWord)) {
-        newFillIns[justWord] = [];
-      }
-      const randomWord = getUniqueRandomWord(justWord);
-      newFillIns[justWord].push(randomWord);
-    });
-    setFillIns(newFillIns);
+    const atWords = storyTextInput.match(regexAtWords);
+    if (!isNil(atWords)) {
+      atWords.forEach((atWord) => {
+        const existingKeys = Object.keys(newFillIns);
+        const justWord = atWord.replace("@", "");
+        if (!existingKeys.includes(justWord)) {
+          newFillIns[justWord] = [];
+        }
+        const randomWord = getUniqueRandomWord(justWord);
+        newFillIns[justWord].push(randomWord);
+      });
+      setFillIns(newFillIns);
+    }
   }, [storyTextInput]);
 
   function a11yProps(index: number) {
