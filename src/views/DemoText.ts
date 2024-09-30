@@ -1,13 +1,13 @@
 import { FillInType } from "../interfaces";
 
 export const demoStoryText =
-  "The @adjective @color @animal @imperative-verb over the @adjective @animal. What a @derogatory-term.";
+  "The @adjective @color @animal @imperative-verb the @adjective @animal. What a @derogatory-term.";
 
 const wordLists: FillInType = {
   adjective: ["quick", "lazy", "cute", "tired", "furry", "annoying"],
   color: ["brown", "black", "blue", "green"],
   animal: ["fox", "dog", "elephant", "lion", "unicorn", "narwhal", "capybara"],
-  "imperative-verb": ["jumped", "left", "exorcised", "ate"],
+  "imperative-verb": ["jumped over", "left", "exorcised", "ate"],
   "derogatory-term": ["asshole", "butt", "knob", "twit", "jerk", "fuckwad"],
 };
 

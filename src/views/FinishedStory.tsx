@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FillInType } from "../interfaces";
+import deepcopy from "deepcopy";
+import { FillInType, regexAtWords } from "../interfaces";
 import { Paper, TextField } from "@mui/material";
+import { isNil } from "lodash";
 
 interface FinishedStoryProps {
   storyTextInput: string;
@@ -12,20 +14,20 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
   useEffect(() => {
     if (fillIns) {
-      const storyTextArray = storyTextInput.split(" ");
-      Object.keys(fillIns).forEach((key) => {
-        const variableName = `@${key}`;
-        const newWordArray = fillIns[key];
-        console.log(newWordArray);
-        newWordArray.forEach((word) => {
-          const idxToReplace = storyTextArray.findIndex(
-            // this part breaks when text has punctuation after it, e.g. "@animal."
-            (text) => text === variableName
-          );
-          storyTextArray.splice(idxToReplace, 1, word);
+      const fillInsCopy = deepcopy(fillIns);
+      const atWords = storyTextInput.match(regexAtWords);
+      if (!isNil(atWords)) {
+        let newText = finishedStoryText;
+        atWords.forEach((atWord) => {
+          const fillInKey = atWord.replace("@", "");
+          const fillInList = fillInsCopy[fillInKey];
+          if (fillInList && fillInList.length > 0) {
+            const fillInWord = fillInList.shift();
+            newText = newText.replace(atWord, fillInWord!);
+          }
         });
-      });
-      setFinishedStoryText(storyTextArray.join(" "));
+        setFinishedStoryText(newText);
+      }
     }
   }, [storyTextInput, fillIns]);
   return (
