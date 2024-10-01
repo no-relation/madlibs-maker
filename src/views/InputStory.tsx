@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 interface InputStoryProps {
@@ -7,29 +7,33 @@ interface InputStoryProps {
   setStoryTextInput: (storyTest: string) => void;
 }
 const InputStory = (props: InputStoryProps) => {
-  let { storyTextInput } = props;
+  let { storyTextInput, setStoryTextInput } = props;
   const label = "Input Story";
 
+  const [textInput, setTextInput] = useState(storyTextInput);
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    props.setStoryTextInput(value);
+    setTextInput(value);
   };
-  return (
-    <TextField
-      id="story-input"
-      name="story-input"
-      placeholder="Input story with placeholders"
-      onChange={handleTextChange}
-      multiline
-      minRows={4}
-      value={storyTextInput}
-      fullWidth
-      autoFocus
-    />
+  const handleBlur = (_: React.FocusEvent<HTMLTextAreaElement>) => {
+    setStoryTextInput(textInput);
+  };
 
-    // <Paper elevation={2}>
-    //   <Typography>Instructions for use</Typography>
-    // </Paper>
+  return (
+    <Paper elevation={2}>
+      <Typography>Instructions for use</Typography>
+      <TextField
+        id="story-input"
+        name="story-input"
+        placeholder="Input story with placeholders"
+        onChange={handleTextChange}
+        onBlur={handleBlur}
+        multiline
+        minRows={4}
+        value={textInput}
+        fullWidth
+      />
+    </Paper>
   );
 };
 
