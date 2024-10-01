@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import deepcopy from "deepcopy";
 import { FillInType, regexAtWords } from "../interfaces";
 import { Paper, TextField } from "@mui/material";
-import { isNil } from "lodash";
+import { isEmpty, isNil } from "lodash";
 
 interface FinishedStoryProps {
   storyTextInput: string;
@@ -22,7 +22,10 @@ const FinishedStory = (props: FinishedStoryProps) => {
           const fillInKey = atWord.replace("@", "");
           const fillInList = fillInsCopy[fillInKey];
           if (fillInList && fillInList.length > 0) {
-            const fillInWord = fillInList.shift();
+            let fillInWord = fillInList.shift();
+            if (isEmpty(fillInWord)) {
+              fillInWord = atWord;
+            }
             newText = newText.replace(atWord, fillInWord!);
           }
         });

@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isNaN } from "lodash";
+import { isNaN, startCase, toLower } from "lodash";
 import deepcopy from "deepcopy";
 
 interface WordListProps {
@@ -35,14 +35,22 @@ const WordList = (props: WordListProps) => {
     }
   };
 
+  const renderWordType = (wordType: string) => {
+    const dashesRemoved = wordType.replace("-", " ").replace("_", " ");
+    const capitalized = startCase(toLower(dashesRemoved));
+    return capitalized;
+  };
+
   return (
     <Paper elevation={2}>
-      <Typography>Instructions for use</Typography>
+      <Typography>
+        Add whatever words you like to match the word type prompted
+      </Typography>
       {fillInState &&
         Object.keys(fillInState).map((key) => (
           <List
             key={`${key}-list`}
-            subheader={<ListSubheader>{key}</ListSubheader>}
+            subheader={<ListSubheader>{renderWordType(key)}</ListSubheader>}
           >
             {fillInState[key].map((fillInKey, idx) => (
               <ListItem key={`${key}-${idx}`}>

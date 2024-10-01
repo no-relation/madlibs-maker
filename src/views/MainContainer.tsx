@@ -22,11 +22,15 @@ const MainContainer = () => {
         if (!existingKeys.includes(justWord)) {
           newFillIns[justWord] = [];
         }
-        const randomWord = getUniqueRandomWord(justWord);
-        newFillIns[justWord].push(randomWord);
+        if (storyTextInput === demoStoryText) {
+          const randomWord = getUniqueRandomWord(justWord);
+          newFillIns[justWord].push(randomWord);
+        } else {
+          newFillIns[justWord].push("");
+        }
       });
-      setFillIns(newFillIns);
     }
+    setFillIns(newFillIns);
   }, [storyTextInput]);
 
   function a11yProps(index: number) {
@@ -87,7 +91,16 @@ const MainContainer = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Typography>MadLibs Maker</Typography>
+      <Typography
+        component="h1"
+        style={{
+          fontSize: "xxx-large",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        MadLibs Maker
+      </Typography>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tabIndexValue} onChange={handleTabChange}>
           {tabValues.map((tabValue, idx) => (

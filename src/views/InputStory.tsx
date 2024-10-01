@@ -21,7 +21,11 @@ const InputStory = (props: InputStoryProps) => {
 
   return (
     <Paper elevation={2}>
-      <Typography>Instructions for use</Typography>
+      <Typography component="h6">
+        To use, paste in whatever text you like, but replace whatever words you
+        want to MadLib with the type of word, starting with an @. You can
+        hyphenate or underscore multiple "@-words", but no spaces.
+      </Typography>
       <TextField
         id="story-input"
         name="story-input"
