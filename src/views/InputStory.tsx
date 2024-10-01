@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 interface InputStoryProps {
@@ -8,7 +8,6 @@ interface InputStoryProps {
 }
 const InputStory = (props: InputStoryProps) => {
   let { storyTextInput, setStoryTextInput } = props;
-  const label = "Input Story";
 
   const [textInput, setTextInput] = useState(storyTextInput);
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {

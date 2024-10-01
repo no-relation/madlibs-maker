@@ -1,6 +1,6 @@
 import { isNil } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Typography, Box, Tabs, Tab, TextField } from "@mui/material";
+import { Typography, Box, Tabs, Tab } from "@mui/material";
 import { FillInType, TabPanelProps, regexAtWords } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";

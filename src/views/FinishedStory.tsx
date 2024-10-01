@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import deepcopy from "deepcopy";
 import { FillInType, regexAtWords } from "../interfaces";
 import { Paper, TextField } from "@mui/material";
@@ -32,7 +32,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
         setFinishedStoryText(newText);
       }
     }
-  }, [storyTextInput, fillIns]);
+  }, [storyTextInput, finishedStoryText, fillIns]);
   return (
     <Paper elevation={2}>
       <TextField multiline fullWidth value={finishedStoryText} />
