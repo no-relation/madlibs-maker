@@ -1,6 +1,6 @@
-import { isNil } from "lodash";
+import { isEmpty, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Typography, Box, Tabs, Tab } from "@mui/material";
+import { Typography, Box, Tabs, Tab, Button } from "@mui/material";
 import { FillInType, TabPanelProps, regexAtWords } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
@@ -8,13 +8,22 @@ import { demoStoryText, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 
 const MainContainer = () => {
-  const [storyTextInput, setStoryTextInput] = useState(demoStoryText);
+  const LOCAL_STORAGE_KEY = "storyText";
+  const [storyTextInput, setStoryTextInput] = useState(
+    () => localStorage.getItem(LOCAL_STORAGE_KEY) || demoStoryText
+  );
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
   useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, storyTextInput);
+  }, [storyTextInput]);
+
+  useEffect(() => {
     const newFillIns: FillInType = {};
     const atWords = storyTextInput.match(regexAtWords);
+    const notAtWords = storyTextInput.split(regexAtWords);
+    console.log(atWords, notAtWords);
     if (!isNil(atWords)) {
       atWords.forEach((atWord) => {
         const existingKeys = Object.keys(newFillIns);
@@ -89,6 +98,10 @@ const MainContainer = () => {
     setTabIndexValue(newValue);
   };
 
+  const reset = () => {
+    setStoryTextInput(demoStoryText);
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Typography
@@ -110,6 +123,12 @@ const MainContainer = () => {
               {...a11yProps(idx)}
             />
           ))}
+          <Button
+            style={{ backgroundColor: "green", color: "white" }}
+            onClick={reset}
+          >
+            Reset to Demo Story
+          </Button>
         </Tabs>
       </Box>
       {tabValues.map((tabValue, idx) => (
