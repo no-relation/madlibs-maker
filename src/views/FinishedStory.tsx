@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import deepcopy from "deepcopy";
 import { FillInType, regexAtWords } from "../interfaces";
-import { Paper, TextField } from "@mui/material";
+import { Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
 
 interface FinishedStoryProps {
@@ -26,16 +26,28 @@ const FinishedStory = (props: FinishedStoryProps) => {
             if (isEmpty(fillInWord)) {
               fillInWord = atWord;
             }
-            newText = newText.replace(atWord, fillInWord!);
+            newText = newText.replace(
+              atWord,
+              `<strong>${fillInWord!}</strong>`
+            );
           }
         });
         setFinishedStoryText(newText);
       }
     }
   }, [storyTextInput, finishedStoryText, fillIns]);
+
+  const finishedStoryStyles: React.CSSProperties = {
+    fontSize: "xx-large",
+    padding: "1em",
+  };
+
   return (
     <Paper elevation={2}>
-      <TextField multiline fullWidth value={finishedStoryText} />
+      <div
+        style={finishedStoryStyles}
+        dangerouslySetInnerHTML={{ __html: finishedStoryText }}
+      ></div>
     </Paper>
   );
 };
