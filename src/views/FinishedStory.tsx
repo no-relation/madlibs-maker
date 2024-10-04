@@ -35,7 +35,8 @@ const FinishedStory = (props: FinishedStoryProps) => {
         setFinishedStoryText(newText);
       }
     }
-  }, [storyTextInput, finishedStoryText, fillIns]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storyTextInput, fillIns]);
 
   const finishedStoryStyles: React.CSSProperties = {
     fontSize: "xx-large",
