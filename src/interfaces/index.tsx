@@ -8,5 +8,4 @@ export type FillInType = {
   [x: string]: string[];
 };
 
-export const regexAtWords: RegExp =
-  /(?<=^|(?<=[^a-zA-Z0-9-_.]))@([A-Za-z0-9-_]+)/g;
+export const regexAtWords: RegExp = /@([A-Za-z0-9-_]+)/g;
