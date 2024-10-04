@@ -1,11 +1,19 @@
 import { isEmpty, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
-import { Typography, Box, Tabs, Tab, Button } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Tabs,
+  Tab,
+  Button,
+  DialogContent,
+} from "@mui/material";
 import { FillInType, TabPanelProps, regexAtWords } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import { demoStoryText, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
+import { Dialog, DialogActions } from "@material-ui/core";
 
 const MainContainer = () => {
   const LOCAL_STORAGE_KEY = "storyText";
@@ -22,8 +30,6 @@ const MainContainer = () => {
   useEffect(() => {
     const newFillIns: FillInType = {};
     const atWords = storyTextInput.match(regexAtWords);
-    const notAtWords = storyTextInput.split(regexAtWords);
-    console.log(atWords, notAtWords);
     if (!isNil(atWords)) {
       atWords.forEach((atWord) => {
         const existingKeys = Object.keys(newFillIns);
@@ -98,6 +104,22 @@ const MainContainer = () => {
     setTabIndexValue(newValue);
   };
 
+  const [openResetConfirm, setOpenResetConfirm] = useState(false);
+  const handleResetClick = () => {
+    setOpenResetConfirm(true);
+  };
+
+  const handleResetDialogClose = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    const { name } = event.currentTarget;
+    const confirm = name === "yes-button";
+    setOpenResetConfirm(false);
+    if (confirm) {
+      reset();
+    }
+  };
+
   const reset = () => {
     setStoryTextInput(demoStoryText);
   };
@@ -125,7 +147,7 @@ const MainContainer = () => {
           ))}
           <Button
             style={{ backgroundColor: "green", color: "white" }}
-            onClick={reset}
+            onClick={handleResetClick}
           >
             Reset to Demo Story
           </Button>
@@ -136,6 +158,20 @@ const MainContainer = () => {
           {tabValue.component}
         </CustomTabPanel>
       ))}
+      <Dialog open={openResetConfirm}>
+        <DialogContent>
+          Are you sure you want to reset to the demo text? You will lose your
+          story!
+        </DialogContent>
+        <DialogActions>
+          <Button name="yes-button" onClick={handleResetDialogClose}>
+            Yes, please
+          </Button>
+          <Button name="no-button" autoFocus onClick={handleResetDialogClose}>
+            Wait, No!
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
