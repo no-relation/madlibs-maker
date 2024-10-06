@@ -11,7 +11,9 @@ interface FinishedStoryProps {
 
 const FinishedStory = (props: FinishedStoryProps) => {
   const { storyTextInput, fillIns } = props;
-  const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
+  const [finishedStoryText, setFinishedStoryText] = useState(
+    storyTextInput.split("\n")
+  );
   useEffect(() => {
     if (fillIns) {
       const fillInsCopy = deepcopy(fillIns);
@@ -26,10 +28,13 @@ const FinishedStory = (props: FinishedStoryProps) => {
             if (isEmpty(fillInWord)) {
               fillInWord = atWord;
             }
-            newText = newText.replace(
-              atWord,
-              `<strong>${fillInWord!}</strong>`
-            );
+            let newTextLine = newText.find((t) => t.includes(atWord));
+            if (!isNil(newTextLine)) {
+              newTextLine = newTextLine.replace(
+                atWord,
+                `<strong>${fillInWord!}</strong>`
+              );
+            }
           }
         });
         setFinishedStoryText(newText);
@@ -47,7 +52,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
     <Paper elevation={2}>
       <div
         style={finishedStoryStyles}
-        dangerouslySetInnerHTML={{ __html: finishedStoryText }}
+        dangerouslySetInnerHTML={{ __html: finishedStoryText.join("<br/>") }}
       ></div>
     </Paper>
   );
