@@ -13,7 +13,7 @@ import InputStory from "./InputStory";
 import WordList from "./WordList";
 import { demoStoryText, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
-import { Dialog, DialogActions } from "@material-ui/core";
+import { Dialog, DialogActions, styled } from "@material-ui/core";
 
 const MainContainer = () => {
   const LOCAL_STORAGE_KEY = "storyText";
@@ -48,10 +48,11 @@ const MainContainer = () => {
     setFillIns(newFillIns);
   }, [storyTextInput]);
 
-  function a11yProps(index: number) {
+  function a11yProps(index: number, name?: string) {
     return {
       id: `simple-tab-${index}`,
       "aria-controls": `simple-tabpanel-${index}`,
+      name: `${name || index}-tab`,
     };
   }
 
@@ -71,9 +72,15 @@ const MainContainer = () => {
     );
   }
 
+  const [openResetConfirm, setOpenResetConfirm] = useState(false);
+  const handleResetClick = () => {
+    setOpenResetConfirm(true);
+  };
+
   type TabValueType = {
     label: string;
     component?: React.ReactNode;
+    name?: string;
   };
 
   const tabValues: TabValueType[] = [
@@ -96,18 +103,22 @@ const MainContainer = () => {
         <FinishedStory storyTextInput={storyTextInput} fillIns={fillIns} />
       ),
     },
+    {
+      label: "",
+      name: "reset",
+    },
   ];
 
-  const [tabIndexValue, setTabIndexValue] = useState(0);
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setTabIndexValue(newValue);
-  };
-
-  const [openResetConfirm, setOpenResetConfirm] = useState(false);
-  const handleResetClick = () => {
-    setOpenResetConfirm(true);
-  };
+  const ResetTab = styled(() => (
+    <Tab
+      style={{ backgroundColor: "green", color: "white" }}
+      label="Reset to Demo"
+      onClick={handleResetClick}
+    />
+  ))(() => ({
+    backgroundColor: "green",
+    color: "white",
+  }));
 
   const handleResetDialogClose = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -124,6 +135,19 @@ const MainContainer = () => {
     setStoryTextInput(demoStoryText);
   };
 
+  const [tabIndexValue, setTabIndexValue] = useState(0);
+
+  const handleTabChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: number
+  ) => {
+    if ((event.target as any).name === "reset-tab") {
+      handleResetClick();
+    } else {
+      setTabIndexValue(newValue);
+    }
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Typography
@@ -137,20 +161,25 @@ const MainContainer = () => {
         MadLibs Maker
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={tabIndexValue} onChange={handleTabChange}>
-          {tabValues.map((tabValue, idx) => (
-            <Tab
-              key={`tab-${idx}`}
-              label={tabValue.label}
-              {...a11yProps(idx)}
-            />
-          ))}
-          <Button
-            style={{ backgroundColor: "green", color: "white" }}
-            onClick={handleResetClick}
-          >
-            Reset to Demo Story
-          </Button>
+        <Tabs
+          value={tabIndexValue}
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          {tabValues.map((tabValue, idx) => {
+            if (tabValue.name === "reset") {
+              return <ResetTab />;
+            } else {
+              return (
+                <Tab
+                  key={`tab-${idx}`}
+                  label={tabValue.label}
+                  {...a11yProps(idx, tabValue.name)}
+                />
+              );
+            }
+          })}
         </Tabs>
       </Box>
       {tabValues.map((tabValue, idx) => (
