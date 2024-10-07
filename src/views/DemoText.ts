@@ -1,14 +1,13 @@
 import { FillInType } from "../interfaces";
 
 export const demoStoryText =
-  "The @adjective brown @animal @imperative-verb the @adjective @animal. What a @derogatory-term.";
+  // "The @adjective brown @animal @imperative-verb the @adjective @animal. What a @derogatory-term.";
+  "It's close to @time-of-day\nAnd something evil's lurking in the @noun\nUnder the @noun\nYou see a sight that almost stops your @noun\nYou try to scream\nBut terror takes the sound before you make it\nYou start to freeze\nAs horror looks you right between the eyes\nYou're paralyzed\n\n[Chorus]\n'Cause this is @spooky-term-1, @spooky-term-1 night\nAnd no one's gonna save you\nFrom the @noun about to strike\nYou know it's @spooky-term-1, @spooky-term-1 night\nYou're fighting for your @noun inside a killer\n@spooky-term-1 tonight, yeah\nOoh";
 
 const wordLists: FillInType = {
-  adjective: ["quick", "lazy", "cute", "tired", "furry", "annoying"],
-  color: ["brown", "black", "blue", "green"],
-  animal: ["fox", "dog", "elephant", "lion", "unicorn", "narwhal", "capybara"],
-  "imperative-verb": ["jumped over", "left", "exorcised", "ate"],
-  "derogatory-term": ["butt", "knob", "twit", "jerk"],
+  "time-of-day": ["midnight", "noon", "breakfast", "three forty-five", "9ish"],
+  noun: ["dark", "moonlight", "socks", "nightmares", "children", "beast"],
+  "spooky-term-1": ["thriller", "creepy", "Republican", "spooky"],
 };
 
 export const getUniqueRandomWord = (

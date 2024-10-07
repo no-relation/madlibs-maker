@@ -66,6 +66,9 @@ const MainContainer = () => {
           newFillIns[justWord] = [];
         }
         if (storyTextInput === demoStoryText) {
+          if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
+            return;
+          }
           const randomWord = getUniqueRandomWord(justWord);
           newFillIns[justWord].push(randomWord);
         } else {
