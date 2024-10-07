@@ -71,8 +71,12 @@ const MainContainer = () => {
         } else {
           if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
             return;
+          } else if (fillIns && Object.keys(fillIns).includes(justWord)) {
+            const oldIndex = newFillIns[justWord].length;
+            newFillIns[justWord][oldIndex] = fillIns[justWord][oldIndex];
+          } else {
+            newFillIns[justWord].push("");
           }
-          newFillIns[justWord].push("");
         }
       });
     }
