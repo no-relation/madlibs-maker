@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FillInType } from "../interfaces";
+import React, { useEffect, useState } from "react";
+import { FillInType, resetStyle } from "../interfaces";
 import {
   List,
   ListItem,
@@ -10,14 +10,20 @@ import {
 } from "@mui/material";
 import { isNaN, startCase, toLower } from "lodash";
 import deepcopy from "deepcopy";
+import { Button } from "@material-ui/core";
 
 interface WordListProps {
   fillIns?: FillInType;
   setFillIns: (newFillIns: FillInType) => void;
+  resetFillIns: () => void;
 }
 const WordList = (props: WordListProps) => {
-  const { fillIns, setFillIns } = props;
+  const { fillIns, setFillIns, resetFillIns } = props;
   const [fillInState, setFillInState] = useState(fillIns);
+
+  useEffect(() => {
+    setFillInState(fillIns);
+  }, [fillIns]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { id, name: key, value } = event.target;
@@ -35,6 +41,10 @@ const WordList = (props: WordListProps) => {
     }
   };
 
+  const handleReset = () => {
+    resetFillIns();
+  };
+
   const renderWordType = (wordType: string) => {
     const dashesRemoved = wordType.replace("-", " ").replace("_", " ");
     const capitalized = startCase(toLower(dashesRemoved));
@@ -46,6 +56,9 @@ const WordList = (props: WordListProps) => {
       <Typography>
         Add whatever words you like to match the word type prompted
       </Typography>
+      <Button style={resetStyle} onClick={handleReset}>
+        Reset
+      </Button>
       {fillInState &&
         Object.keys(fillInState).map((key) => (
           <List

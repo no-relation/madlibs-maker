@@ -1,4 +1,4 @@
-import { isNil } from "lodash";
+import { isEmpty, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -8,24 +8,52 @@ import {
   Button,
   DialogContent,
 } from "@mui/material";
-import { FillInType, TabPanelProps, regexAtWords } from "../interfaces";
+import {
+  CustomTabPanel,
+  FillInType,
+  ResetDialogType,
+  TabPanelProps,
+  a11yProps,
+  findResetDialogType,
+  isAtWordRepeated,
+  regexAtWords,
+  resetStyle,
+} from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import { demoStoryText, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
+import deepcopy from "deepcopy";
 
 const MainContainer = () => {
-  const LOCAL_STORAGE_KEY = "storyText";
+  const STORY_TEXT_KEY = "storyText";
+  const FILLINS_KEY = "fillins";
+
   const [storyTextInput, setStoryTextInput] = useState(
-    () => localStorage.getItem(LOCAL_STORAGE_KEY) || demoStoryText
+    () => localStorage.getItem(STORY_TEXT_KEY) || demoStoryText
   );
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, storyTextInput);
+    localStorage.setItem(STORY_TEXT_KEY, storyTextInput);
   }, [storyTextInput]);
+
+  // why doesn't this work?
+  useEffect(() => {
+    const storedFillInString = localStorage.getItem(FILLINS_KEY);
+    if (!isNil(storedFillInString)) {
+      const fillIns: FillInType = JSON.parse(storedFillInString);
+      setFillIns(fillIns);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (fillIns) {
+      localStorage.setItem(FILLINS_KEY, JSON.stringify(fillIns));
+    }
+  }, [fillIns]);
 
   useEffect(() => {
     const newFillIns: FillInType = {};
@@ -41,6 +69,9 @@ const MainContainer = () => {
           const randomWord = getUniqueRandomWord(justWord);
           newFillIns[justWord].push(randomWord);
         } else {
+          if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
+            return;
+          }
           newFillIns[justWord].push("");
         }
       });
@@ -48,33 +79,30 @@ const MainContainer = () => {
     setFillIns(newFillIns);
   }, [storyTextInput]);
 
-  function a11yProps(index: number, name?: string) {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-      name: `${name || index}-tab`,
-    };
-  }
+  const resetFillIns = () => {
+    if (fillIns) {
+      const newFillIns = deepcopy(fillIns);
+      Object.keys(newFillIns).forEach((key) => {
+        newFillIns[key] = newFillIns[key].map((_) => "");
+      });
+      setFillIns(newFillIns);
+    }
+  };
+  const [resetDialogType, setResetDialogType] = useState<
+    ResetDialogType | undefined
+  >(undefined);
+  const [resetDialogText, setResetDialogText] = useState("");
 
-  function CustomTabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-      </div>
+  const handleResetTextClick = () => {
+    setResetDialogType("storyText");
+    setResetDialogText(
+      "Are you sure you want to reset to the demo text? You will lose your story!"
     );
-  }
+  };
 
-  const [openResetConfirm, setOpenResetConfirm] = useState(false);
-  const handleResetClick = () => {
-    setOpenResetConfirm(true);
+  const handleResetFillIns = () => {
+    setResetDialogType("fillIns");
+    setResetDialogText("Are you certain you want to reset the fill-in words?");
   };
 
   type TabValueType = {
@@ -95,7 +123,13 @@ const MainContainer = () => {
     },
     {
       label: "Word List",
-      component: <WordList fillIns={fillIns} setFillIns={setFillIns} />,
+      component: (
+        <WordList
+          fillIns={fillIns}
+          setFillIns={setFillIns}
+          resetFillIns={handleResetFillIns}
+        />
+      ),
     },
     {
       label: "Finished Story",
@@ -111,9 +145,10 @@ const MainContainer = () => {
 
   const ResetTab = styled(() => (
     <Tab
-      style={{ backgroundColor: "green", color: "white" }}
+      key="reset"
+      style={resetStyle}
       label="Reset to Demo"
-      onClick={handleResetClick}
+      onClick={handleResetTextClick}
     />
   ))(() => ({
     backgroundColor: "green",
@@ -124,14 +159,23 @@ const MainContainer = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     const { name } = event.currentTarget;
-    const confirm = name === "yes-button";
-    setOpenResetConfirm(false);
+    const confirm = name.includes("yes");
+    const dialogType: ResetDialogType | undefined = findResetDialogType(name);
+    setResetDialogType(undefined);
+    setResetDialogText("");
     if (confirm) {
-      reset();
+      switch (dialogType) {
+        case "storyText":
+          resetStoryText();
+          break;
+        case "fillIns":
+          resetFillIns();
+          break;
+      }
     }
   };
 
-  const reset = () => {
+  const resetStoryText = () => {
     setStoryTextInput(demoStoryText);
   };
 
@@ -142,7 +186,7 @@ const MainContainer = () => {
     newValue: number
   ) => {
     if ((event.target as any).name === "reset-tab") {
-      handleResetClick();
+      return;
     } else {
       setTabIndexValue(newValue);
     }
@@ -187,16 +231,20 @@ const MainContainer = () => {
           {tabValue.component}
         </CustomTabPanel>
       ))}
-      <Dialog open={openResetConfirm}>
-        <DialogContent>
-          Are you sure you want to reset to the demo text? You will lose your
-          story!
-        </DialogContent>
+      <Dialog open={!isEmpty(resetDialogText)}>
+        <DialogContent>{resetDialogText}</DialogContent>
         <DialogActions>
-          <Button name="yes-button" onClick={handleResetDialogClose}>
+          <Button
+            name={`${resetDialogType}-yes-button`}
+            onClick={handleResetDialogClose}
+          >
             Yes, please
           </Button>
-          <Button name="no-button" autoFocus onClick={handleResetDialogClose}>
+          <Button
+            name={`${resetDialogType}-no-button`}
+            autoFocus
+            onClick={handleResetDialogClose}
+          >
             Wait, No!
           </Button>
         </DialogActions>

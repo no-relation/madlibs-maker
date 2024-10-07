@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import deepcopy from "deepcopy";
-import { FillInType, regexAtWords } from "../interfaces";
+import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import { Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
 
@@ -14,34 +14,57 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const [finishedStoryText, setFinishedStoryText] = useState(
     storyTextInput.split("\n")
   );
+
   useEffect(() => {
     if (fillIns) {
+      let newText = storyTextInput.split("\n");
       const fillInsCopy = deepcopy(fillIns);
       const atWords = storyTextInput.match(regexAtWords);
       if (!isNil(atWords)) {
-        let newText = finishedStoryText;
         atWords.forEach((atWord) => {
           const fillInKey = atWord.replace("@", "");
           const fillInList = fillInsCopy[fillInKey];
           if (fillInList && fillInList.length > 0) {
-            let fillInWord = fillInList.shift();
+            let fillInWord = fillInList[0];
+            if (!isAtWordRepeated(fillInKey)) {
+              fillInList.shift();
+            }
             if (isEmpty(fillInWord)) {
               fillInWord = atWord;
             }
-            let newTextLine = newText.find((t) => t.includes(atWord));
-            if (!isNil(newTextLine)) {
-              newTextLine = newTextLine.replace(
+            let newTextLineIdx = newText.findIndex((t) => t.includes(atWord));
+            if (newTextLineIdx !== -1) {
+              const newTextLine = newText[newTextLineIdx].replace(
                 atWord,
                 `<strong>${fillInWord!}</strong>`
               );
+              newText.splice(newTextLineIdx, 1, newTextLine);
             }
           }
         });
-        setFinishedStoryText(newText);
       }
+      setFinishedStoryText(newText);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, fillIns]);
+
+  const fillInTheWord = (fillInWord: string, newText: string[]): string[] => {
+    const atWord = `@${fillInWord}`;
+    if (isEmpty(fillInWord)) {
+      fillInWord = atWord;
+    }
+    let newTextLineIdx = newText.findIndex((t) => t.includes(atWord));
+    if (newTextLineIdx === -1) {
+      return newText;
+    } else {
+      const newTextLine = newText[newTextLineIdx].replaceAll(
+        atWord,
+        `<strong>${fillInWord!}</strong>`
+      );
+      newText.splice(newTextLineIdx, 1, newTextLine);
+      return fillInTheWord(fillInWord, newText);
+    }
+  };
 
   const finishedStoryStyles: React.CSSProperties = {
     fontSize: "xx-large",
