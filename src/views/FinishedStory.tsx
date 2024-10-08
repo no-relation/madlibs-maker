@@ -48,24 +48,6 @@ const FinishedStory = (props: FinishedStoryProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, fillIns]);
 
-  const fillInTheWord = (fillInWord: string, newText: string[]): string[] => {
-    const atWord = `@${fillInWord}`;
-    if (isEmpty(fillInWord)) {
-      fillInWord = atWord;
-    }
-    let newTextLineIdx = newText.findIndex((t) => t.includes(atWord));
-    if (newTextLineIdx === -1) {
-      return newText;
-    } else {
-      const newTextLine = newText[newTextLineIdx].replaceAll(
-        atWord,
-        `<strong>${fillInWord!}</strong>`
-      );
-      newText.splice(newTextLineIdx, 1, newTextLine);
-      return fillInTheWord(fillInWord, newText);
-    }
-  };
-
   const finishedStoryStyles: React.CSSProperties = {
     fontSize: "xx-large",
     padding: "1em",

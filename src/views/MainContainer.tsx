@@ -12,7 +12,6 @@ import {
   CustomTabPanel,
   FillInType,
   ResetDialogType,
-  TabPanelProps,
   a11yProps,
   findResetDialogType,
   isAtWordRepeated,
@@ -84,6 +83,7 @@ const MainContainer = () => {
       });
     }
     setFillIns(newFillIns);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput]);
 
   const resetFillIns = () => {

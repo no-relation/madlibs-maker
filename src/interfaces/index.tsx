@@ -13,7 +13,7 @@ export type FillInType = {
 export const regexAtWords: RegExp = /@([A-Za-z0-9-_]+)/g;
 
 export const isAtWordRepeated = (atWord: string): boolean => {
-  const atWordArray = atWord.split(/[\-_]/g);
+  const atWordArray = atWord.split(/[-_]/g);
   const lastElement = atWordArray[atWordArray.length - 1];
   const numberElement = parseInt(lastElement);
   return !isNaN(numberElement);
