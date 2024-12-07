@@ -202,6 +202,16 @@ const MainContainer = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Typography
+        component="h6"
+        style={{
+          fontSize: "x-large",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        '80s Kids Presents:
+      </Typography>
+      <Typography
         component="h1"
         style={{
           fontSize: "xxx-large",
@@ -209,7 +219,7 @@ const MainContainer = () => {
           textAlign: "center",
         }}
       >
-        MadLibs Maker
+        MadLibs Karaoke
       </Typography>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
