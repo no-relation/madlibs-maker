@@ -16,22 +16,26 @@ import {
   findResetDialogType,
   isAtWordRepeated,
   regexAtWords,
-  resetStyle,
 } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
-import { demoStoryText, getUniqueRandomWord } from "./DemoText";
+import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
-import { christmasShow } from "./ShowStyles";
+import { christmasShow, resetStyle } from "./ShowStyles";
 
 const MainContainer = () => {
   const STORY_TEXT_KEY = "storyText";
+  const TITLE_TEXT_KEY = "titleText";
   const FILLINS_KEY = "fillins";
 
   const [storyTextInput, setStoryTextInput] = useState(
     () => localStorage.getItem(STORY_TEXT_KEY) || demoStoryText
+  );
+
+  const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
+    () => localStorage.getItem(TITLE_TEXT_KEY) || demoStoryTitle
   );
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
@@ -39,6 +43,14 @@ const MainContainer = () => {
   useEffect(() => {
     localStorage.setItem(STORY_TEXT_KEY, storyTextInput);
   }, [storyTextInput]);
+
+  useEffect(() => {
+    if (titleTextInput === undefined) {
+      localStorage.removeItem(TITLE_TEXT_KEY);
+    } else {
+      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+    }
+  }, [titleTextInput]);
 
   // why doesn't this work?
   useEffect(() => {
@@ -126,6 +138,8 @@ const MainContainer = () => {
         <InputStory
           storyTextInput={storyTextInput}
           setStoryTextInput={setStoryTextInput}
+          titleTextInput={titleTextInput}
+          setTitleTextInput={setTitleTextInput}
         />
       ),
     },
@@ -142,7 +156,11 @@ const MainContainer = () => {
     {
       label: "Finished Story",
       component: (
-        <FinishedStory storyTextInput={storyTextInput} fillIns={fillIns} />
+        <FinishedStory
+          titleTextInput={titleTextInput}
+          storyTextInput={storyTextInput}
+          fillIns={fillIns}
+        />
       ),
     },
     {
@@ -184,6 +202,7 @@ const MainContainer = () => {
   };
 
   const resetStoryText = () => {
+    setTitleTextInput(demoStoryTitle);
     setStoryTextInput(demoStoryText);
   };
 

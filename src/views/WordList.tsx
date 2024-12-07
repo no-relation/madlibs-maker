@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FillInType, resetStyle } from "../interfaces";
+import { FillInType } from "../interfaces";
 import {
   List,
   ListItem,
@@ -11,6 +11,7 @@ import {
 import { isNaN, startCase, toLower } from "lodash";
 import deepcopy from "deepcopy";
 import { Button } from "@material-ui/core";
+import { resetStyle } from "./ShowStyles";
 
 interface WordListProps {
   fillIns?: FillInType;

@@ -1,5 +1,22 @@
 import { SxProps } from "@mui/material/styles";
 
+export const titleTextStyle: React.CSSProperties = {
+  fontSize: "xxx-large",
+  fontWeight: "bold",
+  textShadow: "2px 2px 1px gray",
+  textAlign: "center",
+};
+
+export const finishedStoryStyles: React.CSSProperties = {
+  fontSize: "xx-large",
+  padding: "1em",
+};
+
+export const resetStyle: React.CSSProperties = {
+  backgroundColor: "green",
+  color: "white",
+};
+
 interface ShowStyle {
   header: {
     root: SxProps;

@@ -2,20 +2,35 @@ import React, { useState } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 interface InputStoryProps {
-  label?: string;
   storyTextInput: string;
   setStoryTextInput: (storyTest: string) => void;
+  titleTextInput?: string;
+  setTitleTextInput: (titleText?: string) => void;
 }
 const InputStory = (props: InputStoryProps) => {
-  let { storyTextInput, setStoryTextInput } = props;
+  let { storyTextInput, setStoryTextInput, titleTextInput, setTitleTextInput } =
+    props;
 
   const [textInput, setTextInput] = useState(storyTextInput);
+  const [titleInput, setTitleInput] = useState<string | undefined>(
+    titleTextInput
+  );
+
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setTextInput(value);
+    const { name, value } = event.target;
+    if (name.includes("title")) {
+      setTitleInput(value);
+    } else {
+      setTextInput(value);
+    }
   };
-  const handleBlur = (_: React.FocusEvent<HTMLTextAreaElement>) => {
-    setStoryTextInput(textInput);
+  const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
+    const { name } = event.target;
+    if (name.includes("title")) {
+      setTitleTextInput(titleInput);
+    } else {
+      setStoryTextInput(textInput);
+    }
   };
 
   return (
@@ -25,6 +40,15 @@ const InputStory = (props: InputStoryProps) => {
         want to MadLib with the type of word, starting with an @. You can
         hyphenate or underscore multiple "@-words", but no spaces.
       </Typography>
+      <TextField
+        id="title-input"
+        name="title-input"
+        placeholder="Input title"
+        onChange={handleTextChange}
+        onBlur={handleBlur}
+        value={titleInput}
+        fullWidth
+      />
       <TextField
         id="story-input"
         name="story-input"

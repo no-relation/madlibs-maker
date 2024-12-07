@@ -54,8 +54,3 @@ export const findResetDialogType = (
   const strArray = str.split("-");
   return strArray.find((s) => isResetDialogType(s));
 };
-
-export const resetStyle: React.CSSProperties = {
-  backgroundColor: "green",
-  color: "white",
-};

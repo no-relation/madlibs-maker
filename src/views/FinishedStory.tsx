@@ -3,14 +3,16 @@ import deepcopy from "deepcopy";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import { Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
+import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
 
 interface FinishedStoryProps {
+  titleTextInput?: string;
   storyTextInput: string;
   fillIns?: FillInType;
 }
 
 const FinishedStory = (props: FinishedStoryProps) => {
-  const { storyTextInput, fillIns } = props;
+  const { titleTextInput, storyTextInput, fillIns } = props;
   const [finishedStoryText, setFinishedStoryText] = useState(
     storyTextInput.split("\n")
   );
@@ -48,13 +50,9 @@ const FinishedStory = (props: FinishedStoryProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, fillIns]);
 
-  const finishedStoryStyles: React.CSSProperties = {
-    fontSize: "xx-large",
-    padding: "1em",
-  };
-
   return (
     <Paper elevation={2}>
+      <div style={titleTextStyle}>{titleTextInput}</div>
       <div
         style={finishedStoryStyles}
         dangerouslySetInnerHTML={{ __html: finishedStoryText.join("<br/>") }}
