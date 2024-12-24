@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Karaoke</title>
+    <script type="text/javascript" src="karaoke.js"></script>
+    <link rel="stylesheet" type="text/css" href="karaoke.css">
+</head>
+
+<body onload="karaoke()">
+    <div class="title">Karaoke</div>
+    <div class="note">Sample and lyrics for demo only
+        (Eminem performing "Monster" ft. Rihanna © 2013 Interscope).
+        Make it your own, replace with legally purchased song of your choice !</div>
+    <div class="background" id="lyrics">
+        <div class="player">
+            <audio id="player" controls preload="auto" onplay="start();">
+                <source src="sample.mp3" type="audio/mpeg" />
+            </audio>
+        </div>
+    </div>
+    <div class="title">CSS is Awesome !</div>
+</body>
+
+</html>

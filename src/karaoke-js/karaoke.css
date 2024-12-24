@@ -1,0 +1,37 @@
+.title {
+    text-align: center;
+    font-size: 30px;
+    color: white;
+    background: black;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.plain {
+    font-size: 30px;
+    color: white;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.highlight {
+    font-size: 30px;
+    color: blue;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.background {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: linear-gradient(to bottom right, red, yellow);
+}
+
+.player {
+    margin: 0 auto;
+    width: 300px;
+}
+
+.note {
+    background-color: darkgray;
+}
