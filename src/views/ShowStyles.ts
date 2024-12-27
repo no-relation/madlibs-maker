@@ -1,4 +1,5 @@
 import { SxProps } from "@mui/material/styles";
+// import headerBkgd from "/images/eq_bkgnd.png";
 
 export const titleTextStyle: React.CSSProperties = {
   fontSize: "xxx-large",
@@ -48,6 +49,40 @@ export const christmasShow: ShowStyle = {
       fontWeight: "bold",
       textAlign: "center",
       backgroundColor: "red",
+      borderRadius: "20px",
+      textShadow: "5px 5px 7px black",
+      color: "white",
+      margin: "auto",
+      padding: "0 0.5em",
+      width: "fit-content",
+    },
+  },
+};
+
+export const baseStyle: ShowStyle = {
+  header: {
+    root: {
+      backgroundImage: `url(${
+        process.env.PUBLIC_URL + "/images/eq_bkgnd.png"
+      })`,
+    },
+    presentsTitle: {
+      fontSize: "x-large",
+      fontWeight: "bold",
+      textAlign: "center",
+      backgroundColor: "rgb(236 30 121)",
+      borderRadius: "20px",
+      textShadow: "5px 5px 7px black",
+      color: "white",
+      margin: "auto",
+      padding: "0 0.5em",
+      width: "fit-content",
+    },
+    mainTitle: {
+      fontSize: "xxx-large",
+      fontWeight: "bold",
+      textAlign: "center",
+      backgroundColor: "rgb(123 223 221)",
       borderRadius: "20px",
       textShadow: "5px 5px 7px black",
       color: "white",

@@ -23,7 +23,7 @@ import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
-import { christmasShow, resetStyle } from "./ShowStyles";
+import { baseStyle, christmasShow, resetStyle } from "./ShowStyles";
 
 const MainContainer = () => {
   const STORY_TEXT_KEY = "storyText";
@@ -219,17 +219,20 @@ const MainContainer = () => {
     }
   };
 
+  const { header } = baseStyle;
+  const { mainTitle, presentsTitle, root } = header;
+
   return (
     <Box
       sx={{
         width: "100%",
       }}
     >
-      <Box sx={christmasShow.header.root}>
-        <Typography component="h6" sx={christmasShow.header.presentsTitle}>
+      <Box sx={root}>
+        <Typography component="h6" sx={presentsTitle}>
           '80s Kids Presents:
         </Typography>
-        <Typography component="h1" sx={christmasShow.header.mainTitle}>
+        <Typography component="h1" sx={mainTitle}>
           MadLibs Karaoke
         </Typography>
       </Box>
