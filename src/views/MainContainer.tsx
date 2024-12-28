@@ -24,7 +24,8 @@ import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
 import { baseStyle, resetStyle } from "./ShowStyles";
-import { getLyricTimings, getParsedLyrics } from "../interfaces/LrcFileParser";
+import { getParsedLyrics } from "../interfaces/LrcFileParser";
+// import { getLyricTimings, getParsedLyrics } from "../interfaces/LrcFileParser";
 
 const MainContainer = () => {
   // const STORY_TEXT_KEY = "storyText";
