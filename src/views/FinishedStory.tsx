@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import deepcopy from "deepcopy";
+import ReactAudioPlayer from "react-audio-player";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import { Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
@@ -50,8 +51,21 @@ const FinishedStory = (props: FinishedStoryProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, fillIns]);
 
+  const songSrc =
+    process.env.PUBLIC_URL +
+    "/musicSrc/All_I_Want_For_Xmas_Mariah_Carey/All_I_Want_For_Xmas_Mariah_Carey.mp3";
+
+  const handlePlay = (event: Event) => {
+    console.log("event:", event);
+  };
   return (
     <Paper elevation={2}>
+      <ReactAudioPlayer
+        id="player"
+        controls
+        src={songSrc}
+        onPlay={handlePlay}
+      />
       <div style={titleTextStyle}>{titleTextInput}</div>
       <div
         style={finishedStoryStyles}

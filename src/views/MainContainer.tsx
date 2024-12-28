@@ -245,7 +245,7 @@ const MainContainer = () => {
         >
           {tabValues.map((tabValue, idx) => {
             if (tabValue.name === "reset") {
-              return <ResetTab />;
+              return <ResetTab key="reset" />;
             } else {
               return (
                 <Tab
