@@ -1,4 +1,4 @@
-import { isEmpty, isNil } from "lodash";
+import { isEmpty, isEqual, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -23,78 +23,84 @@ import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
-import { baseStyle, christmasShow, resetStyle } from "./ShowStyles";
+import { baseStyle, resetStyle } from "./ShowStyles";
+import { getLyricTimings, getParsedLyrics } from "../interfaces/LrcFileParser";
 
 const MainContainer = () => {
-  const STORY_TEXT_KEY = "storyText";
-  const TITLE_TEXT_KEY = "titleText";
-  const FILLINS_KEY = "fillins";
+  // const STORY_TEXT_KEY = "storyText";
+  // const TITLE_TEXT_KEY = "titleText";
+  // const FILLINS_KEY = "fillins";
 
-  const [storyTextInput, setStoryTextInput] = useState(
-    () => localStorage.getItem(STORY_TEXT_KEY) || demoStoryText
+  const [storyTextInput, setStoryTextInput] = useState<string[]>(
+    // () => localStorage.getItem(STORY_TEXT_KEY) ||
+    getParsedLyrics(demoStoryText)
+  );
+
+  const [lineTimingInput, setLineTimingInput] = useState(
+    getLyricTimings(demoStoryText)
   );
 
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
-    () => localStorage.getItem(TITLE_TEXT_KEY) || demoStoryTitle
+    // () => localStorage.getItem(TITLE_TEXT_KEY) ||
+    demoStoryTitle
   );
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
-  useEffect(() => {
-    localStorage.setItem(STORY_TEXT_KEY, storyTextInput);
-  }, [storyTextInput]);
+  // useEffect(() => {
+  //   localStorage.setItem(STORY_TEXT_KEY, storyTextInput);
+  // }, [storyTextInput]);
 
-  useEffect(() => {
-    if (titleTextInput === undefined) {
-      localStorage.removeItem(TITLE_TEXT_KEY);
-    } else {
-      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
-    }
-  }, [titleTextInput]);
+  // useEffect(() => {
+  //   if (titleTextInput === undefined) {
+  //     localStorage.removeItem(TITLE_TEXT_KEY);
+  //   } else {
+  //     localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+  //   }
+  // }, [titleTextInput]);
 
   // why doesn't this work?
-  useEffect(() => {
-    const storedFillInString = localStorage.getItem(FILLINS_KEY);
-    if (!isNil(storedFillInString)) {
-      const fillIns: FillInType = JSON.parse(storedFillInString);
-      setFillIns(fillIns);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedFillInString = localStorage.getItem(FILLINS_KEY);
+  //   if (!isNil(storedFillInString)) {
+  //     const fillIns: FillInType = JSON.parse(storedFillInString);
+  //     setFillIns(fillIns);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (fillIns) {
-      localStorage.setItem(FILLINS_KEY, JSON.stringify(fillIns));
-    }
-  }, [fillIns]);
+  // useEffect(() => {
+  //   if (fillIns) {
+  //     localStorage.setItem(FILLINS_KEY, JSON.stringify(fillIns));
+  //   }
+  // }, [fillIns]);
 
   useEffect(() => {
     const newFillIns: FillInType = {};
-    const atWords = storyTextInput.match(regexAtWords);
-    if (!isNil(atWords)) {
-      atWords.forEach((atWord) => {
-        const existingKeys = Object.keys(newFillIns);
-        const justWord = atWord.replace("@", "");
-        if (!existingKeys.includes(justWord)) {
-          newFillIns[justWord] = [];
-        }
-        if (storyTextInput === demoStoryText) {
-          if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
-            return;
+    storyTextInput.forEach((inputLine) => {
+      const atWords = inputLine.match(regexAtWords);
+      if (!isNil(atWords)) {
+        atWords.forEach((atWord) => {
+          const existingKeys = Object.keys(newFillIns);
+          const justWord = atWord.replace("@", "");
+          if (!existingKeys.includes(justWord)) {
+            newFillIns[justWord] = [];
           }
-          const randomWord = getUniqueRandomWord(justWord);
-          newFillIns[justWord].push(randomWord);
-        } else {
           if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
             return;
-          } else if (fillIns && Object.keys(fillIns).includes(justWord)) {
-            const oldIndex = newFillIns[justWord].length;
-            newFillIns[justWord][oldIndex] = fillIns[justWord][oldIndex];
+          } else if (isEqual(storyTextInput, getParsedLyrics(demoStoryText))) {
+            const randomWord = getUniqueRandomWord(justWord);
+            newFillIns[justWord].push(randomWord);
           } else {
-            newFillIns[justWord].push("");
+            if (fillIns && Object.keys(fillIns).includes(justWord)) {
+              const oldIndex = newFillIns[justWord].length;
+              newFillIns[justWord][oldIndex] = fillIns[justWord][oldIndex];
+            } else {
+              newFillIns[justWord].push("");
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
     setFillIns(newFillIns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput]);
@@ -203,7 +209,7 @@ const MainContainer = () => {
 
   const resetStoryText = () => {
     setTitleTextInput(demoStoryTitle);
-    setStoryTextInput(demoStoryText);
+    setStoryTextInput(getParsedLyrics(demoStoryText));
   };
 
   const [tabIndexValue, setTabIndexValue] = useState(0);

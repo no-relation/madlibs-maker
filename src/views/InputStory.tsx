@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Paper, TextField, Typography } from "@mui/material";
 
 interface InputStoryProps {
-  storyTextInput: string;
-  setStoryTextInput: (storyTest: string) => void;
+  storyTextInput: string[];
+  setStoryTextInput: (storyTest: string[]) => void;
   titleTextInput?: string;
   setTitleTextInput: (titleText?: string) => void;
 }
@@ -11,7 +11,7 @@ const InputStory = (props: InputStoryProps) => {
   let { storyTextInput, setStoryTextInput, titleTextInput, setTitleTextInput } =
     props;
 
-  const [textInput, setTextInput] = useState(storyTextInput);
+  const [textInput, setTextInput] = useState(storyTextInput.join("\n"));
   const [titleInput, setTitleInput] = useState<string | undefined>(
     titleTextInput
   );
@@ -29,7 +29,7 @@ const InputStory = (props: InputStoryProps) => {
     if (name.includes("title")) {
       setTitleTextInput(titleInput);
     } else {
-      setStoryTextInput(textInput);
+      setStoryTextInput(textInput.split("\n"));
     }
   };
 

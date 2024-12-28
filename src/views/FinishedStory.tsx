@@ -8,21 +8,21 @@ import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
 
 interface FinishedStoryProps {
   titleTextInput?: string;
-  storyTextInput: string;
+  storyTextInput: string[];
   fillIns?: FillInType;
 }
 
 const FinishedStory = (props: FinishedStoryProps) => {
   const { titleTextInput, storyTextInput, fillIns } = props;
-  const [finishedStoryText, setFinishedStoryText] = useState(
-    storyTextInput.split("\n")
-  );
+  const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
 
   useEffect(() => {
     if (fillIns) {
-      let newText = storyTextInput.split("\n");
+      let newText = deepcopy(storyTextInput);
       const fillInsCopy = deepcopy(fillIns);
-      const atWords = storyTextInput.match(regexAtWords);
+      const atWords = storyTextInput.flatMap(
+        (line) => line.match(regexAtWords) || []
+      );
       if (!isNil(atWords)) {
         atWords.forEach((atWord) => {
           const fillInKey = atWord.replace("@", "");
@@ -58,6 +58,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const handlePlay = (event: Event) => {
     console.log("event:", event);
   };
+
   return (
     <Paper elevation={2}>
       <ReactAudioPlayer
