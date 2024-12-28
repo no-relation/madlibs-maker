@@ -1,5 +1,4 @@
-import { LineType, LyricLine, parse as lyricParse } from "clrc";
-import { isArray, isEmpty, isNil, isNumber } from "lodash";
+import { LineType, parse as lyricParse } from "clrc";
 
 export const getParsedLyrics = (text: string): string[] => {
   if (text.startsWith("[")) {

@@ -36,9 +36,10 @@ const MainContainer = () => {
     getParsedLyrics(demoStoryText)
   );
 
-  const [lineTimingInput, setLineTimingInput] = useState(
-    getLyricTimings(demoStoryText)
-  );
+  // ...FOR NOW
+  // const [lineTimingInput, setLineTimingInput] = useState(
+  //   getLyricTimings(demoStoryText)
+  // );
 
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
     // () => localStorage.getItem(TITLE_TEXT_KEY) ||
