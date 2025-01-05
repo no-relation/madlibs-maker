@@ -27,7 +27,7 @@ import deepcopy from "deepcopy";
 import { baseStyle, resetStyle } from "./ShowStyles";
 import {
   getLyricTimings,
-  getMetadata,
+  // getMetadata,
   getParsedLyrics,
 } from "../interfaces/LrcFileParser";
 
