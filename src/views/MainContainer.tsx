@@ -1,3 +1,4 @@
+import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
@@ -24,57 +25,65 @@ import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
 import { baseStyle, resetStyle } from "./ShowStyles";
-import { getParsedLyrics } from "../interfaces/LrcFileParser";
-// import { getLyricTimings, getParsedLyrics } from "../interfaces/LrcFileParser";
+import {
+  getLyricTimings,
+  getMetadata,
+  getParsedLyrics,
+} from "../interfaces/LrcFileParser";
 
 const MainContainer = () => {
-  // const STORY_TEXT_KEY = "storyText";
-  // const TITLE_TEXT_KEY = "titleText";
-  // const FILLINS_KEY = "fillins";
+  const STORY_TEXT_KEY = "storyText";
+  const TITLE_TEXT_KEY = "titleText";
+  const LRC_DATA = "lrcData";
+  const FILLINS_KEY = "fillins";
 
-  const [storyTextInput, setStoryTextInput] = useState<string[]>(
-    // () => localStorage.getItem(STORY_TEXT_KEY) ||
-    getParsedLyrics(demoStoryText)
+  const [lrcFile, setLrcFile] = useState<string | undefined>(
+    () => localStorage.getItem(LRC_DATA) || demoStoryText
   );
 
-  // ...FOR NOW
-  // const [lineTimingInput, setLineTimingInput] = useState(
-  //   getLyricTimings(demoStoryText)
-  // );
+  const lrcMetadata = getMetadata(lrcFile || "");
+
+  const [storyTextInput, setStoryTextInput] = useState<string[]>(
+    getParsedLyrics(lrcFile || demoStoryText)
+  );
+
+  const [lineTimingInput, setLineTimingInput] = useState(
+    getLyricTimings(lrcFile || "")
+  );
 
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
-    // () => localStorage.getItem(TITLE_TEXT_KEY) ||
-    demoStoryTitle
+    () => localStorage.getItem(TITLE_TEXT_KEY) || demoStoryTitle
   );
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
-  // useEffect(() => {
-  //   localStorage.setItem(STORY_TEXT_KEY, storyTextInput);
-  // }, [storyTextInput]);
+  useEffect(() => {
+    const stringified = JSON.stringify(storyTextInput);
+    localStorage.setItem(STORY_TEXT_KEY, stringified);
+  }, [storyTextInput]);
 
-  // useEffect(() => {
-  //   if (titleTextInput === undefined) {
-  //     localStorage.removeItem(TITLE_TEXT_KEY);
-  //   } else {
-  //     localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
-  //   }
-  // }, [titleTextInput]);
+  useEffect(() => {
+    if (titleTextInput === undefined) {
+      localStorage.removeItem(TITLE_TEXT_KEY);
+    } else {
+      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+    }
+  }, [titleTextInput]);
 
   // why doesn't this work?
-  // useEffect(() => {
-  //   const storedFillInString = localStorage.getItem(FILLINS_KEY);
-  //   if (!isNil(storedFillInString)) {
-  //     const fillIns: FillInType = JSON.parse(storedFillInString);
-  //     setFillIns(fillIns);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedFillInString = localStorage.getItem(FILLINS_KEY);
+    if (!isNil(storedFillInString)) {
+      const fillIns: FillInType = JSON.parse(storedFillInString);
+      setFillIns(fillIns);
+    }
+  }, []);
 
-  // useEffect(() => {
-  //   if (fillIns) {
-  //     localStorage.setItem(FILLINS_KEY, JSON.stringify(fillIns));
-  //   }
-  // }, [fillIns]);
+  useEffect(() => {
+    if (fillIns) {
+      localStorage.setItem(FILLINS_KEY, JSON.stringify(fillIns));
+    }
+  }, [fillIns]);
 
   useEffect(() => {
     const newFillIns: FillInType = {};
@@ -106,6 +115,20 @@ const MainContainer = () => {
     setFillIns(newFillIns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput]);
+
+  const saveLrcFile = () => {
+    const metadataStringArray = lrcMetadata.map((line) => line.raw);
+    let timesAndLyrics: string[];
+    if (lineTimingInput) {
+      timesAndLyrics = lineTimingInput.map(
+        (timingLine, i) => `[${fromMs(timingLine)}]${storyTextInput[i]}`
+      );
+    } else {
+      timesAndLyrics = storyTextInput;
+    }
+    const lrcString = metadataStringArray.concat(timesAndLyrics).join("\n");
+    localStorage.setItem(LRC_DATA, lrcString);
+  };
 
   const resetFillIns = () => {
     if (fillIns) {
@@ -148,6 +171,8 @@ const MainContainer = () => {
           setStoryTextInput={setStoryTextInput}
           titleTextInput={titleTextInput}
           setTitleTextInput={setTitleTextInput}
+          lineTimingInput={lineTimingInput || []}
+          setLineTimingInput={setLineTimingInput}
         />
       ),
     },

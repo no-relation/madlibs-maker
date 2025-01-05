@@ -1,28 +1,28 @@
 // stol- ahem, borrowed from https://glitch.com/~karaoke-js
 
-var dates = new Array(); // Lyrics timing
-var startSeconds; // Start time
-var linesCount; // Number of Lyric lines
+const dates = new Array(); // Lyrics timing
+let startSeconds; // Start time
+let linesCount; // Number of Lyric lines
 
 function karaoke() {
-  var xhttp = new XMLHttpRequest(); // Load lyrics
+  const xhttp = new XMLHttpRequest(); // Load lyrics
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      var text = xhttp.responseText;
-      var lines = text.split("\n");
+      const text = xhttp.responseText;
+      const lines = text.split("\n");
       linesCount = lines.length;
       for (i = 0; i < lines.length; i++) {
         if (lines[i] != "") {
-          var text = lines[i].replace(/ *\[[^)]*\] */g, ""); // Read lyric text
-          var timing = lines[i].match(/\[([^)]+)\]/)[1]; // Read lyric timing
-          var time = timing.split(":");
-          var date = new Date();
+          const text = lines[i].replace(/ *\[[^)]*\] */g, ""); // Read lyric text
+          const timing = lines[i].match(/\[([^)]+)\]/)[1]; // Read lyric timing
+          const time = timing.split(":");
+          const date = new Date();
           date.setMinutes(time[0]);
-          var subTime = time[1].split(".");
+          const subTime = time[1].split(".");
           date.setSeconds(subTime[0]);
           date.setMilliseconds(subTime[1] * 10);
           dates[i] = date;
-          var style;
+          let style;
           i == 0 ? (style = "highlight") : (style = "plain");
           document.getElementById("lyrics").innerHTML +=
             '<div class="' + style + '" id="' + i + '">' + text + "</div>"; // Add lyric to page
@@ -38,7 +38,7 @@ function karaoke() {
 function start() {
   document.getElementById("player").controls = false;
   startSeconds = new Date().getTime(); // Song just started
-  var nextTime =
+  const nextTime =
     dates[0].getMinutes() * 60000 +
     dates[0].getSeconds() * 1000 +
     dates[0].getMilliseconds();
@@ -53,9 +53,9 @@ function update(current, last) {
     document.getElementById(current - 1).className = "plain"; // Update previous lyric style
   }
   if (current++ < last) {
-    var currentSeconds = new Date().getTime();
-    var passedSeconds = currentSeconds - startSeconds;
-    var nextTime =
+    const currentSeconds = new Date().getTime();
+    const passedSeconds = currentSeconds - startSeconds;
+    const nextTime =
       dates[current].getMinutes() * 60000 +
       dates[current].getSeconds() * 1000 +
       dates[current].getMilliseconds() -
