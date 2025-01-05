@@ -24,11 +24,11 @@ const InputStory = (props: InputStoryProps) => {
     titleTextInput,
     setTitleTextInput,
     lineTimingInput,
-    setLineTimingInput,
+    // setLineTimingInput,
   } = props;
 
   const [textInput, setTextInput] = useState(storyTextInput.join("\n"));
-  const [textLineInput, setTextLineInput] = useState(storyTextInput);
+  // const [textLineInput, setTextLineInput] = useState(storyTextInput);
   const [titleInput, setTitleInput] = useState<string | undefined>(
     titleTextInput
   );
@@ -121,7 +121,8 @@ const InputStory = (props: InputStoryProps) => {
                       onChange={handleTextChange}
                       onBlur={handleBlur}
                       multiline
-                      value={textLineInput[idx]}
+                      value={storyTextInput[idx]}
+                      // value={textLineInput[idx]}
                       fullWidth
                     />
                   </Grid2>

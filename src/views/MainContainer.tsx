@@ -1,4 +1,4 @@
-import { fromMs, toMs } from "hh-mm-ss";
+import { fromMs } from "hh-mm-ss";
 import { isEmpty, isEqual, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
@@ -37,9 +37,10 @@ const MainContainer = () => {
   const LRC_DATA = "lrcData";
   const FILLINS_KEY = "fillins";
 
-  const [lrcFile, setLrcFile] = useState<string | undefined>(
-    () => localStorage.getItem(LRC_DATA) || demoStoryText
-  );
+  // const [lrcFile, setLrcFile] = useState<string | undefined>(
+  //   () => localStorage.getItem(LRC_DATA) || demoStoryText
+  //   );
+  const lrcFile = localStorage.getItem(LRC_DATA) || demoStoryText;
 
   const lrcMetadata = getMetadata(lrcFile || "");
 
@@ -116,19 +117,19 @@ const MainContainer = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput]);
 
-  const saveLrcFile = () => {
-    const metadataStringArray = lrcMetadata.map((line) => line.raw);
-    let timesAndLyrics: string[];
-    if (lineTimingInput) {
-      timesAndLyrics = lineTimingInput.map(
-        (timingLine, i) => `[${fromMs(timingLine)}]${storyTextInput[i]}`
-      );
-    } else {
-      timesAndLyrics = storyTextInput;
-    }
-    const lrcString = metadataStringArray.concat(timesAndLyrics).join("\n");
-    localStorage.setItem(LRC_DATA, lrcString);
-  };
+  // const saveLrcFile = () => {
+  //   const metadataStringArray = lrcMetadata.map((line) => line.raw);
+  //   let timesAndLyrics: string[];
+  //   if (lineTimingInput) {
+  //     timesAndLyrics = lineTimingInput.map(
+  //       (timingLine, i) => `[${fromMs(timingLine)}]${storyTextInput[i]}`
+  //     );
+  //   } else {
+  //     timesAndLyrics = storyTextInput;
+  //   }
+  //   const lrcString = metadataStringArray.concat(timesAndLyrics).join("\n");
+  //   localStorage.setItem(LRC_DATA, lrcString);
+  // };
 
   const resetFillIns = () => {
     if (fillIns) {
