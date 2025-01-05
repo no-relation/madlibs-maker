@@ -1,4 +1,4 @@
-import { fromMs } from "hh-mm-ss";
+// import { fromMs } from "hh-mm-ss";
 import { isEmpty, isEqual, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
@@ -42,7 +42,7 @@ const MainContainer = () => {
   //   );
   const lrcFile = localStorage.getItem(LRC_DATA) || demoStoryText;
 
-  const lrcMetadata = getMetadata(lrcFile || "");
+  // const lrcMetadata = getMetadata(lrcFile || "");
 
   const [storyTextInput, setStoryTextInput] = useState<string[]>(
     getParsedLyrics(lrcFile || demoStoryText)
