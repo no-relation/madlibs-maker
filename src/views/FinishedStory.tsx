@@ -9,12 +9,16 @@ import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
 interface FinishedStoryProps {
   titleTextInput?: string;
   storyTextInput: string[];
+  lineTimingInput?: number[];
   fillIns?: FillInType;
 }
 
 const FinishedStory = (props: FinishedStoryProps) => {
-  const { titleTextInput, storyTextInput, fillIns } = props;
+  const { titleTextInput, storyTextInput, lineTimingInput, fillIns } = props;
   const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
+  const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (fillIns) {
@@ -55,8 +59,30 @@ const FinishedStory = (props: FinishedStoryProps) => {
     process.env.PUBLIC_URL +
     "/musicSrc/All_I_Want_For_Xmas_Mariah_Carey/All_I_Want_For_Xmas_Mariah_Carey.mp3";
 
-  const handlePlay = (event: Event) => {
-    console.log("event:", event);
+  // const handlePlay = (event: Event) => {
+  //   console.log("event:", event);
+  //   // get play time
+  //   // if (playerRef !== null && playerRef.current !== null) {
+  //   //   playerRef.current.onListen(event: any =>);
+  //   // }
+
+  //   // check line timing
+
+  //   // if line timing inside play time, highlight row.
+  // };
+
+  const handleListen = (timeInSeconds: number) => {
+    const lineIdx = getCurrentLineIndex(timeInSeconds * 1000);
+    setCurrentLineIndex(lineIdx);
+  };
+
+  const getCurrentLineIndex = (elapsedMs: number): number | undefined => {
+    if (lineTimingInput) {
+      const idx = lineTimingInput.findIndex((line) => line > elapsedMs);
+      if (idx >= 0) {
+        return idx;
+      }
+    }
   };
 
   return (
@@ -65,13 +91,22 @@ const FinishedStory = (props: FinishedStoryProps) => {
         id="player"
         controls
         src={songSrc}
-        onPlay={handlePlay}
+        // onPlay={handlePlay}
+        listenInterval={50}
+        onListen={handleListen}
       />
       <div style={titleTextStyle}>{titleTextInput}</div>
-      <div
-        style={finishedStoryStyles}
-        dangerouslySetInnerHTML={{ __html: finishedStoryText.join("<br/>") }}
-      ></div>
+      <div style={finishedStoryStyles}>
+        {finishedStoryText.map((storyLine, idx) => (
+          <div
+            key={idx}
+            style={
+              currentLineIndex === idx ? { color: "red" } : { color: "black" }
+            }
+            dangerouslySetInnerHTML={{ __html: storyLine }}
+          ></div>
+        ))}
+      </div>
     </Paper>
   );
 };
