@@ -1,21 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FormControlLabel,
   Grid2,
+  Link,
+  List,
+  ListItem,
   Paper,
   Switch,
   TextField,
   Typography,
 } from "@mui/material";
-import { fromMs } from "hh-mm-ss";
+import { fromMs, toMs } from "hh-mm-ss";
+import { isEmpty, parseInt } from "lodash";
+import deepcopy from "deepcopy";
 
 interface InputStoryProps {
   storyTextInput: string[];
-  setStoryTextInput: (storyTest: string[]) => void;
+  setStoryTextInput: (storyText: string[]) => void;
   titleTextInput?: string;
   setTitleTextInput: (titleText?: string) => void;
-  lineTimingInput: number[];
-  setLineTimingInput: (lineTiming?: number[]) => void;
+  lineTimingInput: Array<number | undefined> | undefined;
+  setLineTimingInput: (lineTiming?: Array<number | undefined>) => void;
 }
 const InputStory = (props: InputStoryProps) => {
   let {
@@ -24,40 +29,67 @@ const InputStory = (props: InputStoryProps) => {
     titleTextInput,
     setTitleTextInput,
     lineTimingInput,
-    // setLineTimingInput,
+    setLineTimingInput,
   } = props;
 
-  const [textInput, setTextInput] = useState(storyTextInput.join("\n"));
-  // const [textLineInput, setTextLineInput] = useState(storyTextInput);
+  const [textLineInput, setTextLineInput] = useState(storyTextInput);
+  const [timingInput, setTimingInput] = useState<Array<string | undefined>>([]);
   const [titleInput, setTitleInput] = useState<string | undefined>(
     titleTextInput
   );
-  const [useLineTimings, setUseLineTimings] = useState(
-    lineTimingInput.length > 0
-  );
+  const [useLineTimings, setUseLineTimings] = useState<boolean>(false);
+
+  useEffect(() => {
+    setTextLineInput(storyTextInput);
+  }, [storyTextInput]);
+
+  useEffect(() => {
+    setTitleInput(titleTextInput);
+  }, [titleTextInput]);
+
+  useEffect(() => {
+    if (lineTimingInput) {
+      const stateTimingArray = lineTimingInput.map((inpt) =>
+        inpt === undefined ? undefined : fromMs(inpt).toString()
+      );
+      setTimingInput(stateTimingArray);
+      setUseLineTimings(lineTimingInput.length > 0);
+    }
+  }, [lineTimingInput]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    const idx: number = parseInt(name);
     if (name.includes("title")) {
       setTitleInput(value);
     } else if (name.includes("timing")) {
-      // for dev
-      console.log(name, value);
+      if (timingInput && timingInput.length > idx + 1) {
+        const newInput = deepcopy(timingInput);
+        newInput[idx] = value;
+        setTimingInput(newInput);
+      }
     } else if (name.includes("story-line")) {
-      // for dev
-      console.log(name, value);
+      const newInput = deepcopy(textLineInput);
+      newInput[idx] = value;
+      setTextLineInput(newInput);
     } else {
-      setTextInput(value);
+      setTextLineInput(value.split("\n"));
     }
   };
+
   const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     const { name } = event.target;
     if (name.includes("title")) {
       setTitleTextInput(titleInput);
     } else {
-      setStoryTextInput(textInput.split("\n"));
+      setStoryTextInput(textLineInput);
+      const timingInputParsed = timingInput.map((ti) =>
+        isEmpty(ti) ? undefined : toMs(ti!)
+      );
+      setLineTimingInput(timingInputParsed);
     }
   };
+
   const handleSwitch = (
     _: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
@@ -72,6 +104,28 @@ const InputStory = (props: InputStoryProps) => {
         want to MadLib with the type of word, starting with an @. You can
         hyphenate or underscore multiple "@-words", but no spaces.
       </Typography>
+      <FormControlLabel
+        label="Use line timing?"
+        control={<Switch checked={useLineTimings} onChange={handleSwitch} />}
+        sx={{ marginLeft: "0.5em" }}
+      />
+      {useLineTimings && (
+        <Typography component="h6">
+          Two sources I like for .lrc files are:
+          <List>
+            <ListItem>
+              <Link href="https://www.lyricsify.com/" target="blank">
+                https://www.lyricsify.com/
+              </Link>
+            </ListItem>
+            <ListItem>
+              <Link href="https://lrclib.net/" target="blank">
+                https://lrclib.net/
+              </Link>
+            </ListItem>
+          </List>
+        </Typography>
+      )}
       <TextField
         id="title-input"
         name="title-input"
@@ -81,11 +135,7 @@ const InputStory = (props: InputStoryProps) => {
         value={titleInput}
         fullWidth
       />
-      <FormControlLabel
-        label="Use line timing?"
-        control={<Switch checked={useLineTimings} onChange={handleSwitch} />}
-        sx={{ marginLeft: "0.5em" }}
-      />
+
       {useLineTimings ? (
         <Grid2 container>
           <Grid2 container>
@@ -95,13 +145,13 @@ const InputStory = (props: InputStoryProps) => {
             <Grid2 />
           </Grid2>
           <Grid2 container>
-            {lineTimingInput!.map((time, idx) => {
-              const lineTimingKey = `line-timing-${idx}`;
-              const storyLineKey = `story-line-${idx}`;
+            {textLineInput.map((line, idx) => {
+              const lineTimingKey = `${idx}-line-timing`;
+              const storyLineKey = `${idx}-story-line`;
               return (
                 <Grid2
                   container
-                  key={`line-${idx}`}
+                  key={`${idx}-line`}
                   sx={{ justifyContent: "flex-start" }}
                   size={12}
                 >
@@ -110,8 +160,9 @@ const InputStory = (props: InputStoryProps) => {
                       id={lineTimingKey}
                       name={lineTimingKey}
                       placeholder="01:02.345"
-                      value={fromMs(time, "mm:ss.sss")}
+                      value={timingInput[idx]}
                       onChange={handleTextChange}
+                      onBlur={handleBlur}
                     />
                   </Grid2>
                   <Grid2 size="grow">
@@ -121,8 +172,7 @@ const InputStory = (props: InputStoryProps) => {
                       onChange={handleTextChange}
                       onBlur={handleBlur}
                       multiline
-                      value={storyTextInput[idx]}
-                      // value={textLineInput[idx]}
+                      value={line}
                       fullWidth
                     />
                   </Grid2>
@@ -140,7 +190,7 @@ const InputStory = (props: InputStoryProps) => {
           onBlur={handleBlur}
           multiline
           minRows={4}
-          value={textInput}
+          value={textLineInput.join("\n")}
           fullWidth
         />
       )}

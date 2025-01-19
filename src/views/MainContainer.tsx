@@ -20,56 +20,82 @@ import {
 } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
-import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
+import {
+  demoStoryText,
+  demoStoryTitle,
+  getUniqueRandomWord,
+  // lrcFileString,
+} from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
 import { baseStyle, resetStyle } from "./ShowStyles";
 import {
   getLyricTimings,
-  // getMetadata,
+  getMetadata,
   getParsedLyrics,
+  // getTitle,
 } from "../interfaces/LrcFileParser";
+import { getLrcFileString, getSongOptions } from "../SongOptions";
 
 const MainContainer = () => {
-  const STORY_TEXT_KEY = "storyText";
-  const TITLE_TEXT_KEY = "titleText";
-  const LRC_DATA = "lrcData";
+  // const STORY_TEXT_KEY = "storyText";
+  // const TITLE_TEXT_KEY = "titleText";
+  // const LRC_DATA = "lrcData";
   const FILLINS_KEY = "fillins";
 
-  // const [lrcFile, setLrcFile] = useState<string | undefined>(
-  //   () => localStorage.getItem(LRC_DATA) || demoStoryText
-  //   );
-  const lrcFile = localStorage.getItem(LRC_DATA) || demoStoryText;
+  const songOptions = getSongOptions();
+  const [songSelection, setSongSelection] = useState(songOptions[0]);
+  const [lrcFile, setLrcFile] = useState<string | null>(null);
+  useEffect(() => {
+    const getFile = async () => {
+      // let fileString = localStorage.getItem(LRC_DATA);
+      // if (isNil(fileString)) {
+      const fileString = await getLrcFileString(songSelection.lrcFile);
+      // if (fileString) {
+      //   localStorage.setItem(LRC_DATA, fileString);
+      // }
+      setLrcFile(fileString);
+      // }
+    };
 
-  // const lrcMetadata = getMetadata(lrcFile || "");
+    getFile();
+  }, [songSelection]);
 
-  const [storyTextInput, setStoryTextInput] = useState<string[]>(
-    getParsedLyrics(lrcFile || demoStoryText)
-  );
+  const [storyTextInput, setStoryTextInput] = useState<string[]>([]);
 
-  const [lineTimingInput, setLineTimingInput] = useState(
-    getLyricTimings(lrcFile || "")
-  );
+  const [lineTimingInput, setLineTimingInput] = useState<
+    Array<number | undefined> | undefined
+  >(undefined);
 
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
-    () => localStorage.getItem(TITLE_TEXT_KEY) || demoStoryTitle
+    undefined
   );
+  // () =>
+  //   localStorage.getItem(TITLE_TEXT_KEY) ||
+  //   getTitle(lrcFile) ||
+  //   demoStoryTitle
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
   useEffect(() => {
-    const stringified = JSON.stringify(storyTextInput);
-    localStorage.setItem(STORY_TEXT_KEY, stringified);
-  }, [storyTextInput]);
+    setStoryTextInput(getParsedLyrics(lrcFile));
+    setLineTimingInput(getLyricTimings(lrcFile));
+    setTitleTextInput(songSelection.displayTitle);
+  }, [lrcFile]);
 
-  useEffect(() => {
-    if (titleTextInput === undefined) {
-      localStorage.removeItem(TITLE_TEXT_KEY);
-    } else {
-      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
-    }
-  }, [titleTextInput]);
+  // useEffect(() => {
+  //   const stringified = JSON.stringify(storyTextInput);
+  //   localStorage.setItem(STORY_TEXT_KEY, stringified);
+  // }, [storyTextInput]);
+
+  // useEffect(() => {
+  //   if (titleTextInput === undefined) {
+  //     localStorage.removeItem(TITLE_TEXT_KEY);
+  //   } else {
+  //     localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+  //   }
+  // }, [titleTextInput]);
 
   // why doesn't this work?
   useEffect(() => {
@@ -193,7 +219,9 @@ const MainContainer = () => {
         <FinishedStory
           titleTextInput={titleTextInput}
           storyTextInput={storyTextInput}
+          lineTimingInput={lineTimingInput}
           fillIns={fillIns}
+          mp3Upload={songSelection.songFile}
         />
       ),
     },
@@ -237,7 +265,10 @@ const MainContainer = () => {
 
   const resetStoryText = () => {
     setTitleTextInput(demoStoryTitle);
-    setStoryTextInput(getParsedLyrics(demoStoryText));
+    setStoryTextInput(demoStoryText.split("\n"));
+    setSongSelection(songOptions[0]);
+    // setLineTimingInput([]);
+    // setStoryTextInput(getParsedLyrics(lrcFile));
   };
 
   const [tabIndexValue, setTabIndexValue] = useState(0);

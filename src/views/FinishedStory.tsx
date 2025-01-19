@@ -5,17 +5,23 @@ import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import { Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
 import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
-import { mp3Upload } from "./DemoText";
 
 interface FinishedStoryProps {
   titleTextInput?: string;
   storyTextInput: string[];
-  lineTimingInput?: number[];
+  lineTimingInput?: Array<number | undefined>;
   fillIns?: FillInType;
+  mp3Upload?: string;
 }
 
 const FinishedStory = (props: FinishedStoryProps) => {
-  const { titleTextInput, storyTextInput, lineTimingInput, fillIns } = props;
+  const {
+    titleTextInput,
+    storyTextInput,
+    lineTimingInput,
+    fillIns,
+    mp3Upload,
+  } = props;
   const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
   const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
     undefined
@@ -76,11 +82,15 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const getCurrentLineIndex = (elapsedMs: number): number | undefined => {
     if (lineTimingInput) {
       const findIndexCallback = (
-        line: number,
-        idx: number,
-        timingArray: number[]
+        line?: number,
+        idx?: number,
+        timingArray?: Array<number | undefined>
       ) => {
-        return line < elapsedMs && timingArray[idx + 1] >= elapsedMs;
+        if (line && idx && timingArray) {
+          const nextLineTimiing = timingArray[idx + 1] || 0;
+          return line < elapsedMs && nextLineTimiing >= elapsedMs;
+        }
+        return false;
       };
       const idx = lineTimingInput.findIndex(findIndexCallback);
       if (idx >= 0) {
@@ -95,16 +105,18 @@ const FinishedStory = (props: FinishedStoryProps) => {
 
   return (
     <Paper elevation={2}>
-      <ReactAudioPlayer
-        id="player"
-        controls
-        src={mp3Upload}
-        preload="auto"
-        // onPlay={handlePlay}
-        listenInterval={50}
-        onListen={handleListen}
-        onError={handleError}
-      />
+      {mp3Upload && (
+        <ReactAudioPlayer
+          id="player"
+          controls
+          src={mp3Upload}
+          preload="auto"
+          // onPlay={handlePlay}
+          listenInterval={50}
+          onListen={handleListen}
+          onError={handleError}
+        />
+      )}
       <div style={titleTextStyle}>{titleTextInput}</div>
       <div style={finishedStoryStyles}>
         {finishedStoryText.map((storyLine, idx) => (
