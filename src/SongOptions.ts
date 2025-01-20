@@ -1,4 +1,4 @@
-import { isNil } from "lodash";
+import { isEmpty, isNil } from "lodash";
 
 const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
@@ -108,7 +108,7 @@ export const getLrcFile = async (
   let songDatas: SongDataLocalStorage[] = [];
   let songData: SongDataLocalStorage | undefined;
 
-  if (!isNil(fileString)) {
+  if (!isNil(fileString) && !isEmpty(fileString)) {
     songDatas = JSON.parse(fileString);
   }
   if (songSelection) {

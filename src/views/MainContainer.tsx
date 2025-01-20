@@ -81,7 +81,8 @@ const MainContainer = () => {
     if (useUploadedSongs && songSelection) {
       setTitleTextInput(songSelection.displayTitle);
     }
-  }, [lrcFile, useUploadedSongs, songSelection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lrcFile]);
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
   // () =>
   //   localStorage.getItem(TITLE_TEXT_KEY) ||
@@ -89,13 +90,16 @@ const MainContainer = () => {
   //   demoStoryTitle
 
   useEffect(() => {
-    const lrcFileString = buildLrcFile(storyTextInput, lineTimingInput);
-    if (useUploadedSongs && songSelection) {
-      saveSongData(songSelection.title, lrcFileString);
+    if (useUploadedSongs && !isEmpty(storyTextInput)) {
+      const lrcFileString = buildLrcFile(storyTextInput, lineTimingInput);
+      if (useUploadedSongs && songSelection) {
+        saveSongData(songSelection.title, lrcFileString);
+      }
     } else {
       localStorage.setItem(STORY_TEXT_KEY, storyTextInput.join("\n"));
     }
-  }, [storyTextInput, lineTimingInput, useUploadedSongs, songSelection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storyTextInput, lineTimingInput]);
 
   useEffect(() => {
     if (titleTextInput === undefined) {
