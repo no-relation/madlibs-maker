@@ -81,7 +81,7 @@ const MainContainer = () => {
     if (useUploadedSongs && songSelection) {
       setTitleTextInput(songSelection.displayTitle);
     }
-  }, [lrcFile]);
+  }, [lrcFile, useUploadedSongs, songSelection]);
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
   // () =>
   //   localStorage.getItem(TITLE_TEXT_KEY) ||
@@ -95,7 +95,7 @@ const MainContainer = () => {
     } else {
       localStorage.setItem(STORY_TEXT_KEY, storyTextInput.join("\n"));
     }
-  }, [storyTextInput]);
+  }, [storyTextInput, lineTimingInput, useUploadedSongs, songSelection]);
 
   useEffect(() => {
     if (titleTextInput === undefined) {
