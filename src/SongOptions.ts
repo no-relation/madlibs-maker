@@ -25,12 +25,12 @@ const rawSongOptions: SongOption[] = [
       dataFolders +
       "The_Time_Of_My_Life/The Time Of My Life (From Dirty Dancing Soundtrack).mp3",
   },
-  {
-    artist: "Barenaked Ladies",
-    title: "Be My Yoko Ono",
-    lrcFile: dataFolders + "Be_My_Yoko_Ono/Be_My_Yoko_Ono.lrc",
-    songFile: dataFolders + "Be_My_Yoko_Ono/Be My Yoko Ono.mp3",
-  },
+  // {
+  //   artist: "Barenaked Ladies",
+  //   title: "Be My Yoko Ono",
+  //   lrcFile: dataFolders + "Be_My_Yoko_Ono/Be_My_Yoko_Ono.lrc",
+  //   songFile: dataFolders + "Be_My_Yoko_Ono/Be My Yoko Ono.mp3",
+  // },
 ];
 
 export const getSongOptions = (): SongOption[] => {

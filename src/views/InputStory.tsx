@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
+  Box,
   FormControlLabel,
   Grid2,
-  Link,
-  List,
-  ListItem,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   Switch,
   TextField,
   Typography,
 } from "@mui/material";
 import { fromMs, toMs } from "hh-mm-ss";
-import { isEmpty, parseInt } from "lodash";
+import { isEmpty, isNil, parseInt } from "lodash";
 import deepcopy from "deepcopy";
+import { SongOption } from "../SongOptions";
 
 interface InputStoryProps {
   storyTextInput: string[];
@@ -21,6 +23,11 @@ interface InputStoryProps {
   setTitleTextInput: (titleText?: string) => void;
   lineTimingInput: Array<number | undefined> | undefined;
   setLineTimingInput: (lineTiming?: Array<number | undefined>) => void;
+  useUploadedSongs: boolean;
+  setUseUploadedSongs: (yesPlease: boolean) => void;
+  songOptions: SongOption[];
+  selectedSong?: SongOption;
+  setSelectedSong: (songOption?: SongOption) => void;
 }
 const InputStory = (props: InputStoryProps) => {
   let {
@@ -30,6 +37,11 @@ const InputStory = (props: InputStoryProps) => {
     setTitleTextInput,
     lineTimingInput,
     setLineTimingInput,
+    useUploadedSongs,
+    setUseUploadedSongs,
+    songOptions,
+    selectedSong,
+    setSelectedSong,
   } = props;
 
   const [textLineInput, setTextLineInput] = useState(storyTextInput);
@@ -37,7 +49,7 @@ const InputStory = (props: InputStoryProps) => {
   const [titleInput, setTitleInput] = useState<string | undefined>(
     titleTextInput
   );
-  const [useLineTimings, setUseLineTimings] = useState<boolean>(false);
+  // const [useLineTimings, setUseLineTimings] = useState<boolean>(false);
 
   useEffect(() => {
     setTextLineInput(storyTextInput);
@@ -53,7 +65,6 @@ const InputStory = (props: InputStoryProps) => {
         inpt === undefined ? undefined : fromMs(inpt).toString()
       );
       setTimingInput(stateTimingArray);
-      setUseLineTimings(lineTimingInput.length > 0);
     }
   }, [lineTimingInput]);
 
@@ -94,7 +105,30 @@ const InputStory = (props: InputStoryProps) => {
     _: React.ChangeEvent<HTMLInputElement>,
     checked: boolean
   ) => {
-    setUseLineTimings(checked);
+    setUseUploadedSongs(checked);
+  };
+
+  const renderSongSelection = () => {
+    return (
+      <Select
+        id="song-select-input"
+        value={selectedSong === undefined ? undefined : selectedSong.title}
+        label="Select song"
+        onChange={handleSongChange}
+      >
+        {songOptions.map((song) => (
+          <MenuItem key={song.title} value={song.title}>
+            {song.displayTitle}
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  };
+  const handleSongChange = (event: SelectChangeEvent) => {
+    const songPick = songOptions.find(
+      (song) => song.title === event.target.value
+    );
+    setSelectedSong(songPick);
   };
 
   return (
@@ -104,12 +138,17 @@ const InputStory = (props: InputStoryProps) => {
         want to MadLib with the type of word, starting with an @. You can
         hyphenate or underscore multiple "@-words", but no spaces.
       </Typography>
-      <FormControlLabel
-        label="Use line timing?"
-        control={<Switch checked={useLineTimings} onChange={handleSwitch} />}
-        sx={{ marginLeft: "0.5em" }}
-      />
-      {useLineTimings && (
+      <Box sx={{ display: "flex" }}>
+        <FormControlLabel
+          label="Use uploaded songs?"
+          control={
+            <Switch checked={useUploadedSongs} onChange={handleSwitch} />
+          }
+          sx={{ marginLeft: "0.5em" }}
+        />
+        {useUploadedSongs && renderSongSelection()}
+      </Box>
+      {/* {useUploadedSongs && (
         <Typography component="h6">
           Two sources I like for .lrc files are:
           <List>
@@ -125,7 +164,7 @@ const InputStory = (props: InputStoryProps) => {
             </ListItem>
           </List>
         </Typography>
-      )}
+      )} */}
       <TextField
         id="title-input"
         name="title-input"
@@ -136,7 +175,7 @@ const InputStory = (props: InputStoryProps) => {
         fullWidth
       />
 
-      {useLineTimings ? (
+      {useUploadedSongs ? (
         <Grid2 container>
           <Grid2 container>
             <Grid2>

@@ -41,8 +41,7 @@ const MainContainer = () => {
   const TITLE_TEXT_KEY = "titleText";
   const FILLINS_KEY = "fillins";
 
-  const useUploadedSongs = true;
-  // const [useUploadedSongs, setUseUploadedSongs] = useState(true);
+  const [useUploadedSongs, setUseUploadedSongs] = useState(true);
   const songOptions = getSongOptions();
   const [songSelection, setSongSelection] = useState<SongOption | undefined>(
     useUploadedSongs ? songOptions[0] : undefined
@@ -83,11 +82,8 @@ const MainContainer = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lrcFile]);
+
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
-  // () =>
-  //   localStorage.getItem(TITLE_TEXT_KEY) ||
-  //   getTitle(lrcFile) ||
-  //   demoStoryTitle
 
   useEffect(() => {
     if (useUploadedSongs && !isEmpty(storyTextInput)) {
@@ -102,10 +98,10 @@ const MainContainer = () => {
   }, [storyTextInput, lineTimingInput]);
 
   useEffect(() => {
-    if (titleTextInput === undefined) {
+    if (isEmpty(titleTextInput)) {
       localStorage.removeItem(TITLE_TEXT_KEY);
     } else {
-      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput!);
     }
   }, [titleTextInput]);
 
@@ -198,6 +194,11 @@ const MainContainer = () => {
           setTitleTextInput={setTitleTextInput}
           lineTimingInput={lineTimingInput || []}
           setLineTimingInput={setLineTimingInput}
+          useUploadedSongs={useUploadedSongs}
+          setUseUploadedSongs={setUseUploadedSongs}
+          songOptions={songOptions}
+          selectedSong={songSelection}
+          setSelectedSong={setSongSelection}
         />
       ),
     },
@@ -264,6 +265,7 @@ const MainContainer = () => {
   const resetStoryText = () => {
     setTitleTextInput(demoStoryTitle);
     setStoryTextInput(demoStoryText.split("\n"));
+    setUseUploadedSongs(false);
     setSongSelection(songOptions[0]);
     // setLineTimingInput([]);
     // setStoryTextInput(getParsedLyrics(lrcFile));
