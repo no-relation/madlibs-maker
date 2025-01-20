@@ -10,6 +10,9 @@ export const titleTextStyle: React.CSSProperties = {
 
 export const finishedStoryStyles: React.CSSProperties = {
   fontSize: "xx-large",
+  height: "50vh",
+  margin: "1em 0",
+  overflow: "auto",
   padding: "1em",
 };
 
@@ -28,9 +31,11 @@ interface ShowStyle {
 export const christmasShow: ShowStyle = {
   header: {
     root: {
-      // backgroundImage: "url(/public/images/snowflakes-554635_1920.jpg)",
-      background:
-        "repeating-linear-gradient(45deg, #ffffff, #ffffff 20px, #fa3030 10px, #fa3030 50px )",
+      backgroundImage: `url(${
+        process.env.PUBLIC_URL + "/images/snowflakes-554635_1920.jpg"
+      })`,
+      //   background:
+      //     "repeating-linear-gradient(45deg, #ffffff, #ffffff 20px, #fa3030 10px, #fa3030 50px )",
     },
     presentsTitle: {
       fontSize: "x-large",

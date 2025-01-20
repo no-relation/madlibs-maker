@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import deepcopy from "deepcopy";
 import ReactAudioPlayer from "react-audio-player";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
-import { Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { isEmpty, isNil } from "lodash";
 import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
 
@@ -62,23 +62,6 @@ const FinishedStory = (props: FinishedStoryProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, fillIns]);
 
-  // const handlePlay = (event: Event) => {
-  //   console.log("event:", event);
-  //   // get play time
-  //   // if (playerRef !== null && playerRef.current !== null) {
-  //   //   playerRef.current.onListen(event: any =>);
-  //   // }
-
-  //   // check line timing
-
-  //   // if line timing inside play time, highlight row.
-  // };
-
-  const handleListen = (timeInSeconds: number) => {
-    const lineIdx = getCurrentLineIndex(timeInSeconds * 1000);
-    setCurrentLineIndex(lineIdx);
-  };
-
   const getCurrentLineIndex = (elapsedMs: number): number | undefined => {
     if (lineTimingInput) {
       const findIndexCallback = (
@@ -99,6 +82,21 @@ const FinishedStory = (props: FinishedStoryProps) => {
     }
   };
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleListen = (timeInSeconds: number) => {
+    const lineIdx = getCurrentLineIndex(timeInSeconds * 1000);
+    if (lineIdx) {
+      setCurrentLineIndex(lineIdx);
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }
+  };
+
   const handleError = (e: Event) => {
     console.error(e);
   };
@@ -111,7 +109,6 @@ const FinishedStory = (props: FinishedStoryProps) => {
           controls
           src={mp3Upload}
           preload="auto"
-          // onPlay={handlePlay}
           listenInterval={50}
           onListen={handleListen}
           onError={handleError}
@@ -120,13 +117,14 @@ const FinishedStory = (props: FinishedStoryProps) => {
       <div style={titleTextStyle}>{titleTextInput}</div>
       <div style={finishedStoryStyles}>
         {finishedStoryText.map((storyLine, idx) => (
-          <div
+          <Box
             key={idx}
-            style={
+            ref={currentLineIndex === idx ? scrollRef : null}
+            sx={
               currentLineIndex === idx ? { color: "red" } : { color: "black" }
             }
             dangerouslySetInnerHTML={{ __html: storyLine }}
-          ></div>
+          ></Box>
         ))}
       </div>
     </Paper>
