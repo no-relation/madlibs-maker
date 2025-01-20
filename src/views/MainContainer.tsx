@@ -23,7 +23,7 @@ import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
-import { baseStyle, resetStyle } from "./ShowStyles";
+import { getShowStyle, resetStyle } from "./ShowStyles";
 import {
   buildLrcFile,
   getLyricTimings,
@@ -284,7 +284,8 @@ const MainContainer = () => {
     }
   };
 
-  const { header } = baseStyle;
+  const showStyle = getShowStyle("valentines");
+  const { header } = showStyle;
   const { mainTitle, presentsTitle, root } = header;
 
   return (

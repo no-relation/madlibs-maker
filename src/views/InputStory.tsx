@@ -138,7 +138,7 @@ const InputStory = (props: InputStoryProps) => {
         want to MadLib with the type of word, starting with an @. You can
         hyphenate or underscore multiple "@-words", but no spaces.
       </Typography>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", padding: "1em" }}>
         <FormControlLabel
           label="Use uploaded songs?"
           control={

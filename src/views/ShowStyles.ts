@@ -1,5 +1,4 @@
 import { SxProps } from "@mui/material/styles";
-// import headerBkgd from "/images/eq_bkgnd.png";
 
 export const titleTextStyle: React.CSSProperties = {
   fontSize: "xxx-large",
@@ -28,72 +27,86 @@ interface ShowStyle {
     mainTitle: SxProps;
   };
 }
-export const christmasShow: ShowStyle = {
-  header: {
-    root: {
-      backgroundImage: `url(${
-        process.env.PUBLIC_URL + "/images/snowflakes-554635_1920.jpg"
-      })`,
-      //   background:
-      //     "repeating-linear-gradient(45deg, #ffffff, #ffffff 20px, #fa3030 10px, #fa3030 50px )",
+
+export const getShowStyle = (name: string): ShowStyle => {
+  let showStyleValues = showStyles.find((ss) => ss.name === name);
+  if (!showStyleValues) {
+    showStyleValues = showStyles.find((ss) => ss.name === "base");
+  }
+  return {
+    header: {
+      root: {
+        backgroundImage: `url(${
+          process.env.PUBLIC_URL + `/images/${showStyleValues?.backgroundImage}`
+        })`,
+        background: showStyleValues!.background,
+      },
+      presentsTitle: {
+        fontSize: "x-large",
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: showStyleValues!.presentsTitle.backgroundColor,
+        borderRadius: "20px",
+        textShadow: "5px 5px 7px black",
+        color: showStyleValues!.presentsTitle.color,
+        margin: "auto",
+        padding: "0 0.5em",
+        width: "fit-content",
+      },
+      mainTitle: {
+        fontSize: "xxx-large",
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: showStyleValues!.mainTitle.backgroundColor,
+        borderRadius: "20px",
+        textShadow: "5px 5px 7px black",
+        color: showStyleValues!.mainTitle.color,
+        margin: "auto",
+        padding: "0 0.5em",
+        width: "fit-content",
+      },
     },
-    presentsTitle: {
-      fontSize: "x-large",
-      fontWeight: "bold",
-      textAlign: "center",
-      backgroundColor: "green",
-      borderRadius: "20px",
-      textShadow: "5px 5px 7px black",
-      color: "white",
-      margin: "auto",
-      padding: "0 0.5em",
-      width: "fit-content",
-    },
-    mainTitle: {
-      fontSize: "xxx-large",
-      fontWeight: "bold",
-      textAlign: "center",
-      backgroundColor: "red",
-      borderRadius: "20px",
-      textShadow: "5px 5px 7px black",
-      color: "white",
-      margin: "auto",
-      padding: "0 0.5em",
-      width: "fit-content",
-    },
-  },
+  };
 };
 
-export const baseStyle: ShowStyle = {
-  header: {
-    root: {
-      backgroundImage: `url(${
-        process.env.PUBLIC_URL + "/images/eq_bkgnd.png"
-      })`,
-    },
+const showStyles = [
+  {
+    name: "base",
+    backgroundImage: "eq_bkgnd.png",
+    background: null,
     presentsTitle: {
-      fontSize: "x-large",
-      fontWeight: "bold",
-      textAlign: "center",
       backgroundColor: "rgb(236 30 121)",
-      borderRadius: "20px",
-      textShadow: "5px 5px 7px black",
       color: "white",
-      margin: "auto",
-      padding: "0 0.5em",
-      width: "fit-content",
     },
     mainTitle: {
-      fontSize: "xxx-large",
-      fontWeight: "bold",
-      textAlign: "center",
       backgroundColor: "rgb(123 223 221)",
-      borderRadius: "20px",
-      textShadow: "5px 5px 7px black",
       color: "white",
-      margin: "auto",
-      padding: "0 0.5em",
-      width: "fit-content",
     },
   },
-};
+  {
+    name: "christmas",
+    backgroundImage: "snowflakes-554635_1920.jpg",
+    background: null,
+    presentsTitle: {
+      backgroundColor: "green",
+      color: "white",
+    },
+    mainTitle: {
+      backgroundColor: "red",
+      color: "white",
+    },
+  },
+  {
+    name: "valentines",
+    backgroundImage: "ValentinesDayBackgroundDesktopWallpaper.jpg",
+    background: null,
+    presentsTitle: {
+      backgroundColor: "pink",
+      color: "white",
+    },
+    mainTitle: {
+      backgroundColor: "red",
+      color: "white",
+    },
+  },
+];
