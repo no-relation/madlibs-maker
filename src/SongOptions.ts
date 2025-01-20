@@ -1,6 +1,8 @@
+import { isNil } from "lodash";
+
 const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
-export const songOptions = [
+const rawSongOptions: SongOption[] = [
   {
     artist: "They Might Be Giants",
     title: "Birdhouse In Your Soul",
@@ -30,3 +32,95 @@ export const songOptions = [
     songFile: dataFolders + "Be_My_Yoko_Ono/Be My Yoko Ono.mp3",
   },
 ];
+
+export const getSongOptions = (): SongOption[] => {
+  return rawSongOptions.map(
+    (opt) => new SongOption(opt.artist, opt.title, opt.lrcFile, opt.songFile)
+  );
+};
+
+export const getLrcFileString = async (lrcFileName: string) => {
+  const fileString = await fetch(lrcFileName)
+    .then((res) => res.text())
+    .catch((err) => {
+      console.error(err);
+      return null;
+    });
+  return fileString;
+};
+
+export class SongOption {
+  artist: string;
+  title: string;
+  lrcFile: string;
+  lrcText?: string;
+  songFile: string;
+  displayTitle?: string;
+
+  constructor(
+    artist: string,
+    title: string,
+    lrcFile: string,
+    songFile: string
+  ) {
+    this.artist = artist;
+    this.title = title;
+    this.lrcFile = lrcFile;
+    this.songFile = songFile;
+    this.displayTitle = `${this.title} - ${this.artist}`;
+  }
+}
+
+export interface SongDataLocalStorage {
+  songTitle: string;
+  lrcFileString: string;
+}
+
+const LRC_DATA_BY_SONG = "lrcDataBySong";
+
+export const saveSongData = (songTitle: string, lrcFileString: string) => {
+  const songData: SongDataLocalStorage = {
+    songTitle,
+    lrcFileString,
+  };
+  let localStored = localStorage.getItem(LRC_DATA_BY_SONG);
+  let songDatas: SongDataLocalStorage[] = [];
+  if (localStored) {
+    songDatas = JSON.parse(localStored);
+    const foundDataIdx = songDatas.findIndex(
+      (d) => d.songTitle === songData.songTitle
+    );
+    if (foundDataIdx === -1) {
+      songDatas.push(songData);
+    } else {
+      songDatas[foundDataIdx] = songData;
+    }
+  } else {
+    songDatas.push(songData);
+  }
+  localStorage.setItem(LRC_DATA_BY_SONG, JSON.stringify(songDatas));
+};
+
+export const getLrcFile = async (
+  songSelection: SongOption
+): Promise<string | null | undefined> => {
+  let fileString = localStorage.getItem(LRC_DATA_BY_SONG);
+  let songDatas: SongDataLocalStorage[] = [];
+  let songData: SongDataLocalStorage | undefined;
+
+  if (!isNil(fileString)) {
+    songDatas = JSON.parse(fileString);
+  }
+  if (songSelection) {
+    songData = songDatas.find((d) => d.songTitle === songSelection.title);
+    if (songData === undefined) {
+      const lrcFileString = await getLrcFileString(songSelection.lrcFile);
+      if (lrcFileString) {
+        saveSongData(songSelection.title, lrcFileString);
+        return lrcFileString;
+      }
+    } else {
+      return songData.lrcFileString;
+    }
+  }
+};

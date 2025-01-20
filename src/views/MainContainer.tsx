@@ -1,4 +1,3 @@
-// import { fromMs } from "hh-mm-ss";
 import { isEmpty, isEqual, isNil } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
@@ -20,49 +19,53 @@ import {
 } from "../interfaces";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
-import {
-  demoStoryText,
-  demoStoryTitle,
-  getUniqueRandomWord,
-  // lrcFileString,
-} from "./DemoText";
+import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
 import deepcopy from "deepcopy";
 import { baseStyle, resetStyle } from "./ShowStyles";
 import {
+  buildLrcFile,
   getLyricTimings,
-  getMetadata,
   getParsedLyrics,
-  // getTitle,
 } from "../interfaces/LrcFileParser";
-import { getLrcFileString, getSongOptions } from "../SongOptions";
+import {
+  SongOption,
+  getLrcFile,
+  getSongOptions,
+  saveSongData,
+} from "../SongOptions";
 
 const MainContainer = () => {
-  // const STORY_TEXT_KEY = "storyText";
-  // const TITLE_TEXT_KEY = "titleText";
-  // const LRC_DATA = "lrcData";
+  const STORY_TEXT_KEY = "storyText";
+  const TITLE_TEXT_KEY = "titleText";
   const FILLINS_KEY = "fillins";
 
+  const useUploadedSongs = true;
+  // const [useUploadedSongs, setUseUploadedSongs] = useState(true);
   const songOptions = getSongOptions();
-  const [songSelection, setSongSelection] = useState(songOptions[0]);
+  const [songSelection, setSongSelection] = useState<SongOption | undefined>(
+    useUploadedSongs ? songOptions[0] : undefined
+  );
   const [lrcFile, setLrcFile] = useState<string | null>(null);
-  useEffect(() => {
-    const getFile = async () => {
-      // let fileString = localStorage.getItem(LRC_DATA);
-      // if (isNil(fileString)) {
-      const fileString = await getLrcFileString(songSelection.lrcFile);
-      // if (fileString) {
-      //   localStorage.setItem(LRC_DATA, fileString);
-      // }
-      setLrcFile(fileString);
-      // }
-    };
-
-    getFile();
-  }, [songSelection]);
-
   const [storyTextInput, setStoryTextInput] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (useUploadedSongs && songSelection) {
+      const getLrc = async () => {
+        const lrcFile = await getLrcFile(songSelection);
+        if (!isNil(lrcFile)) {
+          setLrcFile(lrcFile);
+        }
+      };
+      getLrc();
+    } else {
+      const storyTextFromStorage = localStorage.getItem(STORY_TEXT_KEY);
+      if (storyTextFromStorage) {
+        setStoryTextInput(storyTextFromStorage.split("\n"));
+      }
+    }
+  }, [useUploadedSongs, songSelection]);
 
   const [lineTimingInput, setLineTimingInput] = useState<
     Array<number | undefined> | undefined
@@ -71,31 +74,36 @@ const MainContainer = () => {
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
     undefined
   );
+
+  useEffect(() => {
+    setStoryTextInput(getParsedLyrics(lrcFile));
+    setLineTimingInput(getLyricTimings(lrcFile));
+    if (useUploadedSongs && songSelection) {
+      setTitleTextInput(songSelection.displayTitle);
+    }
+  }, [lrcFile]);
+  const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
   // () =>
   //   localStorage.getItem(TITLE_TEXT_KEY) ||
   //   getTitle(lrcFile) ||
   //   demoStoryTitle
 
-  const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
+  useEffect(() => {
+    const lrcFileString = buildLrcFile(storyTextInput, lineTimingInput);
+    if (useUploadedSongs && songSelection) {
+      saveSongData(songSelection.title, lrcFileString);
+    } else {
+      localStorage.setItem(STORY_TEXT_KEY, storyTextInput.join("\n"));
+    }
+  }, [storyTextInput]);
 
   useEffect(() => {
-    setStoryTextInput(getParsedLyrics(lrcFile));
-    setLineTimingInput(getLyricTimings(lrcFile));
-    setTitleTextInput(songSelection.displayTitle);
-  }, [lrcFile]);
-
-  // useEffect(() => {
-  //   const stringified = JSON.stringify(storyTextInput);
-  //   localStorage.setItem(STORY_TEXT_KEY, stringified);
-  // }, [storyTextInput]);
-
-  // useEffect(() => {
-  //   if (titleTextInput === undefined) {
-  //     localStorage.removeItem(TITLE_TEXT_KEY);
-  //   } else {
-  //     localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
-  //   }
-  // }, [titleTextInput]);
+    if (titleTextInput === undefined) {
+      localStorage.removeItem(TITLE_TEXT_KEY);
+    } else {
+      localStorage.setItem(TITLE_TEXT_KEY, titleTextInput);
+    }
+  }, [titleTextInput]);
 
   // why doesn't this work?
   useEffect(() => {
@@ -142,20 +150,6 @@ const MainContainer = () => {
     setFillIns(newFillIns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput]);
-
-  // const saveLrcFile = () => {
-  //   const metadataStringArray = lrcMetadata.map((line) => line.raw);
-  //   let timesAndLyrics: string[];
-  //   if (lineTimingInput) {
-  //     timesAndLyrics = lineTimingInput.map(
-  //       (timingLine, i) => `[${fromMs(timingLine)}]${storyTextInput[i]}`
-  //     );
-  //   } else {
-  //     timesAndLyrics = storyTextInput;
-  //   }
-  //   const lrcString = metadataStringArray.concat(timesAndLyrics).join("\n");
-  //   localStorage.setItem(LRC_DATA, lrcString);
-  // };
 
   const resetFillIns = () => {
     if (fillIns) {
@@ -221,7 +215,7 @@ const MainContainer = () => {
           storyTextInput={storyTextInput}
           lineTimingInput={lineTimingInput}
           fillIns={fillIns}
-          mp3Upload={songSelection.songFile}
+          mp3Upload={songSelection && songSelection.songFile}
         />
       ),
     },

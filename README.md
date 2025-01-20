@@ -10,7 +10,9 @@ See this in action [here](https://no-relation.github.io/madlibs-maker/).
 
 - [This site](https://blog.logrocket.com/deploying-react-apps-github-pages/#how-to-deploy-react-application-github-pages) was invaluable in figuring out how to deploy with GitHub Pages.
 
-- Parsing of LRC files was made SO much easier with [clrc](https://www.npmjs.com/package/clrc)
+- Life was made easier by:
+    - [clrc](https://www.npmjs.com/package/clrc), for parsing of LRC files
+    - [hh-mm-ss](https://www.npmjs.com/package/hh-mm-ss), for parsing of time strings
 
 ### TODO list
 (as of 12/29/2024)

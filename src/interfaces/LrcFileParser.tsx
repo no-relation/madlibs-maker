@@ -1,10 +1,10 @@
-import {
-  Line,
-  LineType,
-  LyricLine,
-  MetadataLine,
-  parse as lyricParse,
-} from "clrc";
+import { LineType, LyricLine, MetadataLine, parse as lyricParse } from "clrc";
+import { fromMs } from "hh-mm-ss";
+
+export interface ILrcDataBySong {
+  songTitle: string;
+  lrcFileString: string;
+}
 
 export const getTitle = (text?: string | null): string | undefined => {
   const metadata = getMetadata(text);
@@ -71,8 +71,23 @@ const getParsedLyricData = (text: string) => {
   return undefined;
 };
 
-export const stringify = (lines: Line[]): string => {
-  return lines.map((line) => line.raw).join("\n");
+export const buildLrcFile = (
+  storyTextInput: string[],
+  lineTimingInput?: Array<number | undefined>
+): string => {
+  if (lineTimingInput) {
+    const lrcFileArray: string[] = storyTextInput.map((text, idx) => {
+      const timingInput = lineTimingInput[idx];
+      let timingString: string = "";
+      if (timingInput) {
+        timingString = fromMs(timingInput, "mm:ss.sss");
+      }
+      return `[${timingString}]${text}`;
+    });
+    return lrcFileArray.join("\n");
+  }
+
+  return storyTextInput.join("\n");
 };
 
 const isMetadataLine = (line: any): line is MetadataLine<string> => {
