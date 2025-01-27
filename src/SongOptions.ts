@@ -21,9 +21,7 @@ const rawSongOptions: SongOption[] = [
     artist: "Bill Medley & Jennifer Warnes",
     title: "(I've Had) The Time Of My Life",
     lrcFile: dataFolders + "The_Time_Of_My_Life/The_Time_Of_My_Life.lrc",
-    songFile:
-      dataFolders +
-      "The_Time_Of_My_Life/The Time Of My Life (From Dirty Dancing Soundtrack).mp3",
+    songFile: dataFolders + "The_Time_Of_My_Life/The_Time_Of_My_Life.mp3",
   },
   // {
   //   artist: "Barenaked Ladies",
