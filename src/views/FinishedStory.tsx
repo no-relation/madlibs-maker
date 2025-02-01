@@ -22,6 +22,8 @@ const FinishedStory = (props: FinishedStoryProps) => {
     fillIns,
     mp3Upload,
   } = props;
+  const [finishedTitleTextInput, setFinishedTitleTextInput] =
+    useState(titleTextInput);
   const [finishedStoryText, setFinishedStoryText] = useState(storyTextInput);
   const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
     undefined
@@ -30,10 +32,12 @@ const FinishedStory = (props: FinishedStoryProps) => {
   useEffect(() => {
     if (fillIns) {
       let newText = deepcopy(storyTextInput);
+      if (titleTextInput) {
+        newText.unshift(titleTextInput);
+      }
+
       const fillInsCopy = deepcopy(fillIns);
-      const atWords = storyTextInput.flatMap(
-        (line) => line.match(regexAtWords) || []
-      );
+      const atWords = newText.flatMap((line) => line.match(regexAtWords) || []);
       if (!isNil(atWords)) {
         atWords.forEach((atWord) => {
           const fillInKey = atWord.replace("@", "");
@@ -56,6 +60,10 @@ const FinishedStory = (props: FinishedStoryProps) => {
             }
           }
         });
+      }
+      if (titleTextInput) {
+        const newTitle = newText.shift();
+        setFinishedTitleTextInput(newTitle);
       }
       setFinishedStoryText(newText);
     }
@@ -114,7 +122,10 @@ const FinishedStory = (props: FinishedStoryProps) => {
           onError={handleError}
         />
       )}
-      <div style={titleTextStyle}>{titleTextInput}</div>
+      <div
+        style={titleTextStyle}
+        dangerouslySetInnerHTML={{ __html: finishedTitleTextInput || "" }}
+      ></div>
       <div style={finishedStoryStyles}>
         {finishedStoryText.map((storyLine, idx) => (
           <Box

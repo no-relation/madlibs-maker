@@ -4,6 +4,7 @@ export const titleTextStyle: React.CSSProperties = {
   fontSize: "xxx-large",
   fontWeight: "bold",
   textShadow: "2px 2px 1px gray",
+  textTransform: "capitalize",
   textAlign: "center",
 };
 
