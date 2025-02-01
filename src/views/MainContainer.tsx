@@ -26,8 +26,9 @@ import deepcopy from "deepcopy";
 import { getShowStyle, resetStyle } from "./ShowStyles";
 import {
   buildLrcFile,
-  getLyricTimings,
+  getAllSongData,
   getParsedLyrics,
+  getTitle,
 } from "../interfaces/LrcFileParser";
 import {
   SongOption,
@@ -62,6 +63,10 @@ const MainContainer = () => {
       const storyTextFromStorage = localStorage.getItem(STORY_TEXT_KEY);
       if (storyTextFromStorage) {
         setStoryTextInput(storyTextFromStorage.split("\n"));
+        const titleTextFromStorage = localStorage.getItem(TITLE_TEXT_KEY);
+        if (titleTextFromStorage) {
+          setTitleTextInput(titleTextFromStorage);
+        }
       }
     }
   }, [useUploadedSongs, songSelection]);
@@ -75,35 +80,53 @@ const MainContainer = () => {
   );
 
   useEffect(() => {
-    setStoryTextInput(getParsedLyrics(lrcFile));
-    setLineTimingInput(getLyricTimings(lrcFile));
-    if (useUploadedSongs && songSelection) {
-      setTitleTextInput(songSelection.displayTitle);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const { lineTiming, title, text } = getAllSongData(lrcFile);
+    setStoryTextInput(text);
+    setLineTimingInput(lineTiming);
+    setTitleTextInput(title);
   }, [lrcFile]);
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
   useEffect(() => {
-    if (useUploadedSongs && !isEmpty(storyTextInput)) {
-      const lrcFileString = buildLrcFile(storyTextInput, lineTimingInput);
-      if (useUploadedSongs && songSelection) {
+    const titleText = getTitleText(titleTextInput);
+    if (!isEmpty(storyTextInput)) {
+      const lrcFileString = buildLrcFile(
+        storyTextInput,
+        lineTimingInput,
+        titleText
+      );
+      if (songSelection) {
         saveSongData(songSelection.title, lrcFileString);
       }
-    } else {
       localStorage.setItem(STORY_TEXT_KEY, storyTextInput.join("\n"));
+      localStorage.setItem(TITLE_TEXT_KEY, titleText || "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storyTextInput, lineTimingInput]);
+  }, [storyTextInput, lineTimingInput, titleTextInput]);
 
   useEffect(() => {
-    if (isEmpty(titleTextInput)) {
-      localStorage.removeItem(TITLE_TEXT_KEY);
-    } else {
+    if (!isEmpty(titleTextInput))
       localStorage.setItem(TITLE_TEXT_KEY, titleTextInput!);
-    }
   }, [titleTextInput]);
+
+  const getTitleText = (titleTextInput?: string): string | undefined => {
+    if (titleTextInput) {
+      return titleTextInput;
+    }
+    let titleText: string | undefined =
+      localStorage.getItem(TITLE_TEXT_KEY) || undefined;
+    if (isNil(titleText)) {
+      const titleFromLrc = getTitle(lrcFile);
+      if (titleFromLrc) {
+        titleText = titleFromLrc;
+      } else if (songSelection) {
+        titleText = songSelection.displayTitle;
+      }
+    }
+
+    return titleText;
+  };
 
   // why doesn't this work?
   useEffect(() => {

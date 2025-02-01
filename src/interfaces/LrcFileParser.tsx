@@ -6,6 +6,20 @@ export interface ILrcDataBySong {
   lrcFileString: string;
 }
 
+interface SongData {
+  lineTiming?: number[];
+  text: string[];
+  title?: string;
+}
+
+export const getAllSongData = (text?: string | null): SongData => {
+  return {
+    lineTiming: getLyricTimings(text),
+    text: getParsedLyrics(text),
+    title: getTitle(text),
+  };
+};
+
 export const getTitle = (text?: string | null): string | undefined => {
   const metadata = getMetadata(text);
   if (metadata.length > 0) {
@@ -73,7 +87,8 @@ const getParsedLyricData = (text: string) => {
 
 export const buildLrcFile = (
   storyTextInput: string[],
-  lineTimingInput?: Array<number | undefined>
+  lineTimingInput?: Array<number | undefined>,
+  songTitle?: string
 ): string => {
   if (lineTimingInput) {
     const lrcFileArray: string[] = storyTextInput.map((text, idx) => {
@@ -84,6 +99,9 @@ export const buildLrcFile = (
       }
       return `[${timingString}]${text}`;
     });
+    if (songTitle) {
+      lrcFileArray.unshift(`[ti:${songTitle}]`);
+    }
     return lrcFileArray.join("\n");
   }
 
