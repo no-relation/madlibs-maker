@@ -145,7 +145,11 @@ const MainContainer = () => {
 
   useEffect(() => {
     const newFillIns: FillInType = {};
-    storyTextInput.forEach((inputLine) => {
+    const storyTextCopy = deepcopy(storyTextInput);
+    if (titleTextInput) {
+      storyTextCopy.unshift(titleTextInput);
+    }
+    storyTextCopy.forEach((inputLine) => {
       const atWords = inputLine.match(regexAtWords);
       if (!isNil(atWords)) {
         atWords.forEach((atWord) => {
@@ -172,7 +176,7 @@ const MainContainer = () => {
     });
     setFillIns(newFillIns);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storyTextInput]);
+  }, [storyTextInput, titleTextInput]);
 
   const resetFillIns = () => {
     if (fillIns) {
