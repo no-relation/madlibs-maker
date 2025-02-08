@@ -38,15 +38,33 @@ import {
 } from "../SongOptions";
 
 const MainContainer = () => {
+  const SONG_SELECTION_TITLE = "songSelectionTitle";
   const STORY_TEXT_KEY = "storyText";
   const TITLE_TEXT_KEY = "titleText";
   const FILLINS_KEY = "fillins";
 
+  const getSongSelection = (): SongOption | undefined => {
+    const storedSongSelectionTitle = localStorage.getItem(SONG_SELECTION_TITLE);
+    if (storedSongSelectionTitle) {
+      return songOptions.find((opt) => opt.title === storedSongSelectionTitle);
+    }
+
+    return songOptions[0];
+  };
+
   const [useUploadedSongs, setUseUploadedSongs] = useState(true);
   const songOptions = getSongOptions();
   const [songSelection, setSongSelection] = useState<SongOption | undefined>(
-    useUploadedSongs ? songOptions[0] : undefined
+    useUploadedSongs ? getSongSelection : undefined
   );
+
+  const handleSetSelectedSong = (songOption?: SongOption) => {
+    if (songOption) {
+      localStorage.setItem(SONG_SELECTION_TITLE, songOption.title);
+    }
+    setSongSelection(songOption);
+  };
+
   const [lrcFile, setLrcFile] = useState<string | null>(null);
   const [storyTextInput, setStoryTextInput] = useState<string[]>([]);
 
@@ -225,7 +243,7 @@ const MainContainer = () => {
           setUseUploadedSongs={setUseUploadedSongs}
           songOptions={songOptions}
           selectedSong={songSelection}
-          setSelectedSong={setSongSelection}
+          setSelectedSong={handleSetSelectedSong}
         />
       ),
     },
