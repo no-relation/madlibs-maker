@@ -3,14 +3,14 @@ import { isEmpty, isNil } from "lodash";
 const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
-  {
-    artist: "They Might Be Giants",
-    title: "Birdhouse In Your Soul",
-    lrcFile:
-      dataFolders +
-      "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
-    songFile: dataFolders + "Birdhouse_In_Your_Soul/Birdhouse In Your Soul.mp3",
-  },
+  // {
+  //   artist: "They Might Be Giants",
+  //   title: "Birdhouse In Your Soul",
+  //   lrcFile:
+  //     dataFolders +
+  //     "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
+  //   songFile: dataFolders + "Birdhouse_In_Your_Soul/Birdhouse In Your Soul.mp3",
+  // },
   {
     artist: "Lionel Richie",
     title: "Endless Love",
