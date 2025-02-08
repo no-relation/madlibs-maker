@@ -77,9 +77,8 @@ const FinishedStory = (props: FinishedStoryProps) => {
         idx?: number,
         timingArray?: Array<number | undefined>
       ) => {
-        if (line && idx && timingArray) {
-          const nextLineTimiing = timingArray[idx + 1] || 0;
-          return line < elapsedMs && nextLineTimiing >= elapsedMs;
+        if (line && idx !== undefined && timingArray && timingArray[idx + 1]) {
+          return line < elapsedMs && timingArray[idx + 1]! >= elapsedMs;
         }
         return false;
       };
@@ -94,7 +93,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
 
   const handleListen = (timeInSeconds: number) => {
     const lineIdx = getCurrentLineIndex(timeInSeconds * 1000);
-    if (lineIdx) {
+    if (lineIdx !== undefined) {
       setCurrentLineIndex(lineIdx);
       if (scrollRef.current) {
         scrollRef.current.scrollIntoView({
