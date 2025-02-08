@@ -15,7 +15,7 @@ const rawSongOptions: SongOption[] = [
     artist: "Lionel Richie",
     title: "Endless Love",
     lrcFile: dataFolders + "Endless_Love/Endless_Love.lrc",
-    songFile: dataFolders + "Endless_Love/Endless Love.mp3",
+    songFile: dataFolders + "Endless_Love/Endless_Love.mp3",
   },
   {
     artist: "Bill Medley & Jennifer Warnes",
