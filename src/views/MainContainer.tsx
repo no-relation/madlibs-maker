@@ -1,5 +1,5 @@
 import { isEmpty, isEqual, isNil } from "lodash";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Typography,
   Box,
@@ -106,8 +106,24 @@ const MainContainer = () => {
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
 
+  const usePrevious = <T extends unknown>(value: T): T | undefined => {
+    const ref = useRef<T>();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  };
+
+  const previousSongSelection = usePrevious(songSelection);
   useEffect(() => {
-    const titleText = getTitleText(titleTextInput);
+    const songDidChange: boolean = !isEqual(
+      previousSongSelection,
+      songSelection
+    );
+    const titleText = getTitleText(titleTextInput, songDidChange);
+    // // for dev
+    // console.log("songDidChange:", songDidChange);
+    // console.log("titleText:", titleText);
     if (!isEmpty(storyTextInput)) {
       const lrcFileString = buildLrcFile(
         storyTextInput,
@@ -121,21 +137,28 @@ const MainContainer = () => {
       localStorage.setItem(TITLE_TEXT_KEY, titleText || "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storyTextInput, lineTimingInput, titleTextInput]);
+  }, [storyTextInput, lineTimingInput, titleTextInput, songSelection]);
 
   useEffect(() => {
     if (!isEmpty(titleTextInput))
       localStorage.setItem(TITLE_TEXT_KEY, titleTextInput!);
   }, [titleTextInput]);
 
-  const getTitleText = (titleTextInput?: string): string | undefined => {
+  const getTitleText = (
+    titleTextInput?: string,
+    getOriginalTitle?: boolean
+  ): string | undefined => {
+    const titleFromLrc = getTitle(lrcFile);
+    if (getOriginalTitle) {
+      return titleFromLrc;
+    }
+
     if (titleTextInput) {
       return titleTextInput;
     }
     let titleText: string | undefined =
       localStorage.getItem(TITLE_TEXT_KEY) || undefined;
     if (isNil(titleText)) {
-      const titleFromLrc = getTitle(lrcFile);
       if (titleFromLrc) {
         titleText = titleFromLrc;
       } else if (songSelection) {
@@ -331,7 +354,7 @@ const MainContainer = () => {
 
   const showStyle = getShowStyle("valentines");
   const { header } = showStyle;
-  const { mainTitle, presentsTitle, root } = header;
+  const { mainTitle, presentsTitle, root, logo } = header;
 
   return (
     <Box
@@ -340,12 +363,22 @@ const MainContainer = () => {
       }}
     >
       <Box sx={root}>
-        <Typography component="h6" sx={presentsTitle}>
-          '80s Kids Presents:
-        </Typography>
-        <Typography component="h1" sx={mainTitle}>
-          MadLibs Karaoke
-        </Typography>
+        <Box sx={{ flex: 1 }}>
+          <Box
+            sx={logo}
+            component="img"
+            src={process.env.PUBLIC_URL + `/images/80sKidsLogo.png`}
+          />
+        </Box>
+        <Box>
+          <Typography component="h6" sx={presentsTitle}>
+            '80s Kids Presents:
+          </Typography>
+          <Typography component="h1" sx={mainTitle}>
+            MadLibs Karaoke
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1 }} />
       </Box>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs

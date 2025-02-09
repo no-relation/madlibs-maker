@@ -23,6 +23,7 @@ export const resetStyle: React.CSSProperties = {
 
 interface ShowStyle {
   header: {
+    logo: SxProps;
     root: SxProps;
     presentsTitle: SxProps;
     mainTitle: SxProps;
@@ -36,11 +37,19 @@ export const getShowStyle = (name: string): ShowStyle => {
   }
   return {
     header: {
+      logo: {
+        height: 90,
+        rotate: "-20deg",
+        padding: "0.75em 2em",
+      },
       root: {
         backgroundImage: `url(${
           process.env.PUBLIC_URL + `/images/${showStyleValues?.backgroundImage}`
         })`,
         background: showStyleValues!.background,
+        display: "flex",
+        flexWrap: "nowrap",
+        justifyContent: "space-between",
       },
       presentsTitle: {
         fontSize: "x-large",
