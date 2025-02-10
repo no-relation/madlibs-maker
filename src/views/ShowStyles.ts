@@ -39,7 +39,7 @@ export const getShowStyle = (name: string): ShowStyle => {
     header: {
       logo: {
         height: 90,
-        rotate: "-20deg",
+        // rotate: "-20deg",
         padding: "0.75em 2em",
       },
       root: {
