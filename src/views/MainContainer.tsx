@@ -335,6 +335,7 @@ const MainContainer = () => {
     setStoryTextInput(demoStoryText.split("\n"));
     setUseUploadedSongs(false);
     setSongSelection(songOptions[0]);
+    localStorage.clear();
     // setLineTimingInput([]);
     // setStoryTextInput(getParsedLyrics(lrcFile));
   };
