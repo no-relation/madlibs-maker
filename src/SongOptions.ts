@@ -12,16 +12,24 @@ const rawSongOptions: SongOption[] = [
   //   songFile: dataFolders + "Birdhouse_In_Your_Soul/Birdhouse In Your Soul.mp3",
   // },
   {
-    artist: "Lionel Richie",
-    title: "Endless Love",
-    lrcFile: dataFolders + "Endless_Love/Endless_Love.lrc",
-    songFile: dataFolders + "Endless_Love/Endless_Love.mp3",
-  },
-  {
     artist: "Bill Medley & Jennifer Warnes",
     title: "(I've Had) The Time Of My Life",
     lrcFile: dataFolders + "The_Time_Of_My_Life/The_Time_Of_My_Life.lrc",
     songFile: dataFolders + "The_Time_Of_My_Life/The_Time_Of_My_Life.mp3",
+  },
+  {
+    artist: "Elton John and Kiki Dee",
+    title: "Don't Go Breaking My Heart",
+    lrcFile:
+      dataFolders + "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart.lrc",
+    songFile:
+      dataFolders + "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart.mp3",
+  },
+  {
+    artist: "Lionel Richie",
+    title: "Endless Love",
+    lrcFile: dataFolders + "Endless_Love/Endless_Love.lrc",
+    songFile: dataFolders + "Endless_Love/Endless_Love.mp3",
   },
   // {
   //   artist: "Barenaked Ladies",
