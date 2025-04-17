@@ -1,12 +1,10 @@
-import { isEmpty, isEqual, isNil } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
 import {
-  Typography,
   Box,
-  Tabs,
-  Tab,
   Button,
   DialogContent,
+  Tab,
+  Tabs,
+  Typography,
 } from "@mui/material";
 import {
   CustomTabPanel,
@@ -17,25 +15,31 @@ import {
   isAtWordRepeated,
   regexAtWords,
 } from "../interfaces";
-import InputStory from "./InputStory";
-import WordList from "./WordList";
-import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
-import FinishedStory from "./FinishedStory";
 import { Dialog, DialogActions, styled } from "@material-ui/core";
-import deepcopy from "deepcopy";
-import { getShowStyle, resetStyle } from "./ShowStyles";
 import {
+  DuetPart,
   buildLrcFile,
   getAllSongData,
   getParsedLyrics,
   getTitle,
 } from "../interfaces/LrcFileParser";
 import {
+  LRC_DATA_BY_SONG,
   SongOption,
   getLrcFile,
   getSongOptions,
   saveSongData,
 } from "../SongOptions";
+import React, { useEffect, useRef, useState } from "react";
+import { getShowStyle, resetStyle } from "./ShowStyles";
+import { isEmpty, isEqual, isNil } from "lodash";
+
+import FinishedStory from "./FinishedStory";
+import InputStory from "./InputStory";
+import WordList from "./WordList";
+import deepcopy from "deepcopy";
+
+// import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 
 const MainContainer = () => {
   const SONG_SELECTION_TITLE = "songSelectionTitle";
@@ -97,11 +101,14 @@ const MainContainer = () => {
     undefined
   );
 
+  const [duetParts, setDuetParts] = useState<DuetPart[] | undefined>();
+
   useEffect(() => {
-    const { lineTiming, title, text } = getAllSongData(lrcFile);
+    const { lineTiming, title, text, duetParts } = getAllSongData(lrcFile);
     setStoryTextInput(text);
     setLineTimingInput(lineTiming);
     setTitleTextInput(title);
+    setDuetParts(duetParts);
   }, [lrcFile]);
 
   const [fillIns, setFillIns] = useState<FillInType | undefined>(undefined);
@@ -128,6 +135,7 @@ const MainContainer = () => {
       const lrcFileString = buildLrcFile(
         storyTextInput,
         lineTimingInput,
+        duetParts,
         titleText
       );
       if (songSelection) {
@@ -201,9 +209,9 @@ const MainContainer = () => {
           }
           if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
             return;
-          } else if (isEqual(storyTextInput, getParsedLyrics(demoStoryText))) {
-            const randomWord = getUniqueRandomWord(justWord);
-            newFillIns[justWord].push(randomWord);
+            // } else if (isEqual(storyTextInput, getParsedLyrics(demoStoryText))) {
+            //   const randomWord = getUniqueRandomWord(justWord);
+            //   newFillIns[justWord].push(randomWord);
           } else {
             if (fillIns && Object.keys(fillIns).includes(justWord)) {
               const oldIndex = newFillIns[justWord].length;
@@ -331,11 +339,17 @@ const MainContainer = () => {
   };
 
   const resetStoryText = () => {
-    setTitleTextInput(demoStoryTitle);
-    setStoryTextInput(demoStoryText.split("\n"));
-    setUseUploadedSongs(false);
-    setSongSelection(songOptions[0]);
-    localStorage.clear();
+    localStorage.removeItem(STORY_TEXT_KEY);
+    localStorage.removeItem(TITLE_TEXT_KEY);
+    localStorage.removeItem(FILLINS_KEY);
+    localStorage.removeItem(LRC_DATA_BY_SONG);
+    setUseUploadedSongs(true);
+    if (lrcFile !== null) {
+      setLrcFile(null);
+    }
+    // setSongSelection(songOptions[0]);
+    // setTitleTextInput(demoStoryTitle);
+    // setStoryTextInput(demoStoryText.split("\n"));
     // setLineTimingInput([]);
     // setStoryTextInput(getParsedLyrics(lrcFile));
   };
@@ -353,7 +367,7 @@ const MainContainer = () => {
     }
   };
 
-  const showStyle = getShowStyle("valentines");
+  const showStyle = getShowStyle("base");
   const { header } = showStyle;
   const { mainTitle, presentsTitle, root, logo } = header;
 

@@ -82,7 +82,7 @@ export interface SongDataLocalStorage {
   lrcFileString: string;
 }
 
-const LRC_DATA_BY_SONG = "lrcDataBySong";
+export const LRC_DATA_BY_SONG = "lrcDataBySong";
 
 export const saveSongData = (songTitle: string, lrcFileString: string) => {
   const songData: SongDataLocalStorage = {

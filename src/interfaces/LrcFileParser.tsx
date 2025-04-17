@@ -1,4 +1,5 @@
 import { LineType, LyricLine, MetadataLine, parse as lyricParse } from "clrc";
+
 import { fromMs } from "hh-mm-ss";
 
 export interface ILrcDataBySong {
@@ -10,6 +11,7 @@ interface SongData {
   lineTiming?: number[];
   text: string[];
   title?: string;
+  duetParts?: DuetPart[];
 }
 
 export const getAllSongData = (text?: string | null): SongData => {
@@ -17,6 +19,7 @@ export const getAllSongData = (text?: string | null): SongData => {
     lineTiming: getLyricTimings(text),
     text: getParsedLyrics(text),
     title: getTitle(text),
+    duetParts: getDuetParts(text),
   };
 };
 
@@ -42,19 +45,47 @@ export const getMetadata = (text?: string | null): MetadataLine<string>[] => {
   return [];
 };
 
-export const getParsedLyrics = (text?: string | null): string[] => {
+const getLyricLines = (text?: string | null): LyricLine[] => {
   if (text) {
     const parsed = getParsedLyricData(text);
     if (parsed) {
-      const mapped = parsed.map((line) => {
-        if (isLyricLine(line)) {
-          return line.content;
-        }
-        return "no content";
-      });
-      const filtered = mapped.filter((line) => line !== "no content");
-      return filtered;
+      const lyricLines = parsed.filter((line) => isLyricLine(line));
+      return lyricLines as LyricLine[];
     }
+  }
+
+  return [];
+};
+
+const duetIndicator = ["M:", "F:", "D:"];
+export const getParsedLyrics = (text?: string | null): string[] => {
+  if (text) {
+    const lyricLines = getLyricLines(text);
+    if (lyricLines) {
+      const mapped = lyricLines.map((line) => {
+        if (duetIndicator.includes(line.content.slice(0, 2))) {
+          return line.content.slice(2).trim();
+        } else {
+          return line.content.trim();
+        }
+      });
+      return mapped;
+    }
+    // const parsed = getParsedLyricData(text);
+    // if (parsed) {
+    //   const mapped = parsed.map((line) => {
+    //     if (isLyricLine(line)) {
+    //       if (duetIndicator.includes(line.content.slice(0, 2))) {
+    //         return line.content.slice(2).trim();
+    //       } else {
+    //         return line.content.trim();
+    //       }
+    //     }
+    //     return "no content";
+    //   });
+    //   const filtered = mapped.filter((line) => line !== "no content");
+    //   return filtered;
+    // }
     return text.split("\n");
   }
   return [];
@@ -76,6 +107,44 @@ export const getLyricTimings = (text?: string | null): number[] | undefined => {
   }
 };
 
+export type DuetPart = "1" | "2" | "both" | undefined;
+export const getDuetParts = (text?: string | null): DuetPart[] | undefined => {
+  if (text) {
+    const lyricLines = getLyricLines(text);
+    if (lyricLines) {
+      return lyricLines.map((line) => {
+        switch (line.content.slice(0, 2)) {
+          case "M:":
+            return "1";
+          case "F:":
+            return "2";
+          case "D:":
+            return "both";
+          default:
+            return undefined;
+        }
+      });
+    }
+    // const parsed = getParsedLyricData(text);
+    // if (parsed) {
+    //   return parsed.map((line) => {
+    //     if (isLyricLine(line)) {
+    //       switch (line.content.slice(0, 2)) {
+    //         case "M:":
+    //           return "1";
+    //         case "F:":
+    //           return "2";
+    //         case "D:":
+    //           return "both";
+    //         default:
+    //           return undefined;
+    //       }
+    //     }
+    //   });
+    // }
+  }
+};
+
 const getParsedLyricData = (text: string) => {
   if (text.length > 0 && text.startsWith("[")) {
     const regEx = /(?:\r\n|\r)/g;
@@ -88,6 +157,7 @@ const getParsedLyricData = (text: string) => {
 export const buildLrcFile = (
   storyTextInput: string[],
   lineTimingInput?: Array<number | undefined>,
+  duetPartsInput?: DuetPart[],
   songTitle?: string
 ): string => {
   if (lineTimingInput) {
@@ -97,7 +167,24 @@ export const buildLrcFile = (
       if (timingInput) {
         timingString = fromMs(timingInput, "mm:ss.sss");
       }
-      return `[${timingString}]${text}`;
+      let duetPart: string = "";
+      if (duetPartsInput) {
+        const duetPartInput = duetPartsInput[idx];
+        if (duetPartInput) {
+          switch (duetPartInput) {
+            case "1":
+              duetPart = "M:";
+              break;
+            case "2":
+              duetPart = "F:";
+              break;
+            case "both":
+              duetPart = "D:";
+              break;
+          }
+        }
+      }
+      return `[${timingString}]${duetPart} ${text}`;
     });
     if (songTitle) {
       lrcFileArray.unshift(`[ti:${songTitle}]`);
