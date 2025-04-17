@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
+  Divider,
   FormControlLabel,
   Grid2,
+  IconButton,
   MenuItem,
   Paper,
   Select,
   SelectChangeEvent,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
+import { Cancel, Publish } from "@material-ui/icons";
+import React, { useEffect, useState } from "react";
 import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, parseInt } from "lodash";
-import deepcopy from "deepcopy";
+
 import { SongOption } from "../SongOptions";
+import deepcopy from "deepcopy";
 
 interface InputStoryProps {
   storyTextInput: string[];
@@ -131,6 +136,32 @@ const InputStory = (props: InputStoryProps) => {
     setSelectedSong(songPick);
   };
 
+  const handleAddLine = (idx: number | "last") => () => {
+    console.log("adding line");
+    const newTimingInput = deepcopy(timingInput);
+    const newTextLineInput = deepcopy(textLineInput);
+    if (idx === "last") {
+      const minTime = newTimingInput[newTimingInput.length - 1];
+      newTimingInput.push(minTime);
+      newTextLineInput.push("");
+    } else {
+      const minTime = newTimingInput[idx - 1] || "00:00.000";
+      newTimingInput.splice(idx, 0, minTime);
+      newTextLineInput.splice(idx, 0, "");
+    }
+    setTimingInput(newTimingInput);
+    setTextLineInput(newTextLineInput);
+  };
+
+  const handleRemoveLine = (idx: number) => () => {
+    const newTimingInput = deepcopy(timingInput);
+    const newTextLineInput = deepcopy(textLineInput);
+    newTimingInput.splice(idx, 1);
+    newTextLineInput.splice(idx, 1);
+    setTimingInput(newTimingInput);
+    setTextLineInput(newTextLineInput);
+  };
+
   return (
     <Paper elevation={2}>
       <Typography component="h6">
@@ -140,7 +171,7 @@ const InputStory = (props: InputStoryProps) => {
       </Typography>
       <Box sx={{ display: "flex", padding: "1em" }}>
         <FormControlLabel
-          label="Use uploaded songs?"
+          label="Use line-by-line fields?"
           control={
             <Switch checked={useUploadedSongs} onChange={handleSwitch} />
           }
@@ -177,48 +208,52 @@ const InputStory = (props: InputStoryProps) => {
 
       {useUploadedSongs ? (
         <Grid2 container>
-          <Grid2 container>
-            <Grid2>
+          <Grid2 container size={12} sx={{ backgroundColor: "#80808080" }}>
+            <Grid2 sx={{ minWidth: "40px" }} />
+            <Grid2 size={2}>
               <Typography>Start Time</Typography>
             </Grid2>
-            <Grid2 />
+            <Grid2 size="grow">
+              <Typography>Song lyric</Typography>
+            </Grid2>
           </Grid2>
-          <Grid2 container>
-            {textLineInput.map((line, idx) => {
-              const lineTimingKey = `${idx}-line-timing`;
-              const storyLineKey = `${idx}-story-line`;
-              return (
-                <Grid2
-                  container
-                  key={`${idx}-line`}
-                  sx={{ justifyContent: "flex-start" }}
-                  size={12}
-                >
-                  <Grid2 size={2}>
-                    <TextField
-                      id={lineTimingKey}
-                      name={lineTimingKey}
-                      placeholder="01:02.345"
-                      value={timingInput[idx]}
-                      onChange={handleTextChange}
-                      onBlur={handleBlur}
-                    />
-                  </Grid2>
-                  <Grid2 size="grow">
-                    <TextField
-                      id={storyLineKey}
-                      name={storyLineKey}
-                      onChange={handleTextChange}
-                      onBlur={handleBlur}
-                      multiline
-                      value={line}
-                      fullWidth
-                    />
-                  </Grid2>
+          {textLineInput.map((line, idx) => {
+            const lineTimingKey = `${idx}-line-timing`;
+            const storyLineKey = `${idx}-story-line`;
+            return (
+              <Grid2
+                key={`${idx}-line`}
+                container
+                sx={{ justifyContent: "flex-start", alignItems: "center" }}
+                size={12}
+              >
+                {addLine(idx)}
+                <Grid2 size={2}>
+                  <TextField
+                    id={lineTimingKey}
+                    name={lineTimingKey}
+                    placeholder="01:02.345"
+                    value={timingInput[idx]}
+                    onChange={handleTextChange}
+                    onBlur={handleBlur}
+                  />
                 </Grid2>
-              );
-            })}
-          </Grid2>
+                <Grid2 size="grow">
+                  <TextField
+                    id={storyLineKey}
+                    name={storyLineKey}
+                    onChange={handleTextChange}
+                    onBlur={handleBlur}
+                    multiline
+                    value={line}
+                    fullWidth
+                  />
+                </Grid2>
+                {removeLine(idx)}
+              </Grid2>
+            );
+          })}
+          {addLine("last")}
         </Grid2>
       ) : (
         <TextField
@@ -235,6 +270,48 @@ const InputStory = (props: InputStoryProps) => {
       )}
     </Paper>
   );
+
+  function addLine(idx: number | "last") {
+    return (
+      <Grid2 key={`${idx}-add-line`} size="auto">
+        <Tooltip title="Add a line above this">
+          <IconButton
+            name={`${idx}-add-line`}
+            sx={{ color: "gray" }}
+            onClick={handleAddLine(idx)}
+          >
+            <Publish />
+          </IconButton>
+        </Tooltip>
+      </Grid2>
+    );
+  }
+
+  function removeLine(idx: number) {
+    const isDisabled = !isEmpty(textLineInput[idx]);
+    return (
+      <Grid2 key={`${idx}-remove-line`} size={"auto"}>
+        <Tooltip
+          title={
+            isDisabled
+              ? "You must clear the text before removing the line"
+              : "Remove this line"
+          }
+        >
+          <span>
+            <IconButton
+              name={`${idx}-remove-line`}
+              sx={{ color: "red" }}
+              disabled={isDisabled}
+              onClick={handleRemoveLine(idx)}
+            >
+              <Cancel />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </Grid2>
+    );
+  }
 };
 
 export default InputStory;
