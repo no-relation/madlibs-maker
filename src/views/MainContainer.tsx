@@ -62,15 +62,23 @@ const MainContainer = () => {
     useUploadedSongs ? getSongSelection : undefined
   );
 
+  const [lrcFile, setLrcFile] = useState<string | null>(null);
+
+  const [storyTextInput, setStoryTextInput] = useState<string[]>([]);
+  const [lineTimingInput, setLineTimingInput] = useState<
+    Array<number | undefined> | undefined
+  >(undefined);
+  const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
+    undefined
+  );
+  const [duetParts, setDuetParts] = useState<DuetPart[] | undefined>();
+
   const handleSetSelectedSong = (songOption?: SongOption) => {
     if (songOption) {
       localStorage.setItem(SONG_SELECTION_TITLE, songOption.title);
     }
     setSongSelection(songOption);
   };
-
-  const [lrcFile, setLrcFile] = useState<string | null>(null);
-  const [storyTextInput, setStoryTextInput] = useState<string[]>([]);
 
   useEffect(() => {
     if (useUploadedSongs && songSelection) {
@@ -92,16 +100,6 @@ const MainContainer = () => {
       }
     }
   }, [useUploadedSongs, songSelection]);
-
-  const [lineTimingInput, setLineTimingInput] = useState<
-    Array<number | undefined> | undefined
-  >(undefined);
-
-  const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
-    undefined
-  );
-
-  const [duetParts, setDuetParts] = useState<DuetPart[] | undefined>();
 
   useEffect(() => {
     const { lineTiming, title, text, duetParts } = getAllSongData(lrcFile);
@@ -270,6 +268,8 @@ const MainContainer = () => {
           setTitleTextInput={setTitleTextInput}
           lineTimingInput={lineTimingInput || []}
           setLineTimingInput={setLineTimingInput}
+          duetPartInput={duetParts}
+          setDuetPartInput={setDuetParts}
           useUploadedSongs={useUploadedSongs}
           setUseUploadedSongs={setUseUploadedSongs}
           songOptions={songOptions}

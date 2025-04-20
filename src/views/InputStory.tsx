@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, parseInt } from "lodash";
 
+import { DuetPart } from "../interfaces/LrcFileParser";
 import { SongOption } from "../SongOptions";
 import deepcopy from "deepcopy";
 
@@ -28,6 +29,8 @@ interface InputStoryProps {
   setTitleTextInput: (titleText?: string) => void;
   lineTimingInput: Array<number | undefined> | undefined;
   setLineTimingInput: (lineTiming?: Array<number | undefined>) => void;
+  duetPartInput?: DuetPart[];
+  setDuetPartInput: (duetPart?: DuetPart[]) => void;
   useUploadedSongs: boolean;
   setUseUploadedSongs: (yesPlease: boolean) => void;
   songOptions: SongOption[];
@@ -42,6 +45,8 @@ const InputStory = (props: InputStoryProps) => {
     setTitleTextInput,
     lineTimingInput,
     setLineTimingInput,
+    duetPartInput,
+    setDuetPartInput,
     useUploadedSongs,
     setUseUploadedSongs,
     songOptions,
@@ -79,7 +84,9 @@ const InputStory = (props: InputStoryProps) => {
     if (name.includes("title")) {
       setTitleInput(value);
     } else if (name.includes("timing")) {
-      if (timingInput && timingInput.length > idx + 1) {
+      console.log("idx:", idx);
+      console.log("timingInput.length:", timingInput.length);
+      if (timingInput && timingInput.length >= idx + 1) {
         const newInput = deepcopy(timingInput);
         newInput[idx] = value;
         setTimingInput(newInput);
@@ -137,29 +144,40 @@ const InputStory = (props: InputStoryProps) => {
   };
 
   const handleAddLine = (idx: number | "last") => () => {
-    console.log("adding line");
     const newTimingInput = deepcopy(timingInput);
     const newTextLineInput = deepcopy(textLineInput);
+    const newDuetPart = deepcopy(duetPartInput) || [];
+    let prevDuetPart = newDuetPart[newDuetPart.length - 1];
     if (idx === "last") {
       const minTime = newTimingInput[newTimingInput.length - 1];
       newTimingInput.push(minTime);
       newTextLineInput.push("");
+      newDuetPart.push(prevDuetPart);
     } else {
+      prevDuetPart = newDuetPart[idx - 1];
+      newDuetPart.splice(idx, 0, prevDuetPart);
       const minTime = newTimingInput[idx - 1] || "00:00.000";
       newTimingInput.splice(idx, 0, minTime);
       newTextLineInput.splice(idx, 0, "");
     }
     setTimingInput(newTimingInput);
     setTextLineInput(newTextLineInput);
+    setDuetPartInput(newDuetPart);
   };
 
   const handleRemoveLine = (idx: number) => () => {
     const newTimingInput = deepcopy(timingInput);
-    const newTextLineInput = deepcopy(textLineInput);
     newTimingInput.splice(idx, 1);
-    newTextLineInput.splice(idx, 1);
     setTimingInput(newTimingInput);
+
+    const newDuetPartInput = deepcopy(duetPartInput) || [];
+    newDuetPartInput.splice(idx, 1);
+    setDuetPartInput(newDuetPartInput);
+
+    const newTextLineInput = deepcopy(textLineInput);
+    newTextLineInput.splice(idx, 1);
     setTextLineInput(newTextLineInput);
+    setStoryTextInput(newTextLineInput);
   };
 
   return (
