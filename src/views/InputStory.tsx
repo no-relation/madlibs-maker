@@ -29,6 +29,7 @@ import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 import { DuetPart } from "../interfaces/LrcFileParser";
 import { SongOption } from "../SongOptions";
 import deepcopy from "deepcopy";
+import { duetColors } from "./ShowStyles";
 
 interface InputStoryProps {
   storyTextInput: string[];
@@ -103,6 +104,15 @@ const InputStory = (props: InputStoryProps) => {
     }
 
     return [false, false];
+  };
+
+  const getDuetPartColor = (idx: number): string | undefined => {
+    const duetPartInput = getDuetPartInput(duetParts[idx]);
+    if (duetPartInput === undefined) {
+      return;
+    }
+
+    return duetColors[duetPartInput];
   };
 
   useEffect(() => {
@@ -249,6 +259,20 @@ const InputStory = (props: InputStoryProps) => {
     return undefined;
   };
 
+  const getDuetPartTooltip = (checkboxes: [boolean, boolean]): string => {
+    const duetPartInput = getDuetPartInput(checkboxes);
+    switch (duetPartInput) {
+      case "1":
+        return "Singer 1 sings";
+      case "2":
+        return "Singer 2 sings";
+      case "both":
+        return "Both singers sing";
+      default:
+        return "";
+    }
+  };
+
   return (
     <Paper elevation={2}>
       <Typography component="h6">
@@ -311,7 +335,6 @@ const InputStory = (props: InputStoryProps) => {
           {textLineInput.map((line, idx) => {
             const lineTimingKey = `${idx}-line-timing`;
             const storyLineKey = `${idx}-story-line`;
-            // const duetPart = duetPartInput ? duetPartInput[idx] : undefined;
             return (
               <Grid2
                 key={`${idx}-line`}
@@ -343,24 +366,7 @@ const InputStory = (props: InputStoryProps) => {
                     fullWidth
                   />
                 </Grid2>
-                <Grid2 size={1}>
-                  <Checkbox
-                    checked={duetParts[idx][0]}
-                    id={`${idx}-duet-singer-0`}
-                    name={`${idx}-duet-singer-0`}
-                    icon={<LooksOneOutlined />}
-                    checkedIcon={<LooksOne />}
-                    onChange={handleDuetCheckboxChange}
-                  />
-                  <Checkbox
-                    checked={duetParts[idx][1]}
-                    id={`${idx}-duet-singer-1`}
-                    name={`${idx}-duet-singer-1`}
-                    icon={<LooksTwoOutlined />}
-                    checkedIcon={<LooksTwo />}
-                    onChange={handleDuetCheckboxChange}
-                  />
-                </Grid2>
+                {duetCheckboxInput(idx)}
                 <Grid2 key={`${idx}-remove-line`} size={"auto"}>
                   {removeLine(idx)}
                 </Grid2>
@@ -421,6 +427,39 @@ const InputStory = (props: InputStoryProps) => {
             <Cancel />
           </IconButton>
         </span>
+      </Tooltip>
+    );
+  }
+
+  function duetCheckboxInput(idx: number) {
+    return (
+      <Tooltip title={getDuetPartTooltip(duetParts[idx])}>
+        <Grid2 size={1}>
+          <Checkbox
+            sx={{
+              // color: getDuetPartColor(idx),
+              "&.Mui-checked": { color: getDuetPartColor(idx) },
+            }}
+            checked={duetParts[idx][0]}
+            id={`${idx}-duet-singer-0`}
+            name={`${idx}-duet-singer-0`}
+            icon={<LooksOneOutlined />}
+            checkedIcon={<LooksOne />}
+            onChange={handleDuetCheckboxChange}
+          />
+          <Checkbox
+            sx={{
+              // color: getDuetPartColor(idx),
+              "&.Mui-checked": { color: getDuetPartColor(idx) },
+            }}
+            checked={duetParts[idx][1]}
+            id={`${idx}-duet-singer-1`}
+            name={`${idx}-duet-singer-1`}
+            icon={<LooksTwoOutlined />}
+            checkedIcon={<LooksTwo />}
+            onChange={handleDuetCheckboxChange}
+          />
+        </Grid2>
       </Tooltip>
     );
   }

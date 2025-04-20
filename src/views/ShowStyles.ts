@@ -1,5 +1,11 @@
 import { SxProps } from "@mui/material/styles";
 
+export const duetColors = {
+  1: "#d21919",
+  2: "#673ab7",
+  both: "#19d236",
+};
+
 export const titleTextStyle: React.CSSProperties = {
   fontSize: "xxx-large",
   fontWeight: "bold",
