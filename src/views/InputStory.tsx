@@ -1,5 +1,6 @@
 import {
   Box,
+  Checkbox,
   Divider,
   FormControlLabel,
   Grid2,
@@ -13,10 +14,17 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Cancel, Publish } from "@material-ui/icons";
+import {
+  Cancel,
+  LooksOne,
+  LooksOneOutlined,
+  LooksTwo,
+  LooksTwoOutlined,
+  Publish,
+} from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { fromMs, toMs } from "hh-mm-ss";
-import { isEmpty, parseInt } from "lodash";
+import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
 import { SongOption } from "../SongOptions";
@@ -60,6 +68,7 @@ const InputStory = (props: InputStoryProps) => {
     titleTextInput
   );
   // const [useLineTimings, setUseLineTimings] = useState<boolean>(false);
+  const [duetParts, setDuetParts] = useState<[boolean, boolean][]>([]);
 
   useEffect(() => {
     setTextLineInput(storyTextInput);
@@ -78,14 +87,39 @@ const InputStory = (props: InputStoryProps) => {
     }
   }, [lineTimingInput]);
 
+  const getDuetCheckboxValue = (idx: number): [boolean, boolean] => {
+    if (idx >= 0 && duetPartInput) {
+      const duetPart = duetPartInput[idx];
+      switch (duetPart) {
+        case "1":
+          return [true, false];
+        case "2":
+          return [false, true];
+        case "both":
+          return [true, true];
+        default:
+          return getDuetCheckboxValue(idx - 1);
+      }
+    }
+
+    return [false, false];
+  };
+
+  useEffect(() => {
+    if (duetPartInput) {
+      const duetParts: [boolean, boolean][] = duetPartInput.map((_, idx) => {
+        return getDuetCheckboxValue(idx);
+      });
+      setDuetParts(duetParts);
+    }
+  }, [duetPartInput]);
+
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const idx: number = parseInt(name);
     if (name.includes("title")) {
       setTitleInput(value);
     } else if (name.includes("timing")) {
-      console.log("idx:", idx);
-      console.log("timingInput.length:", timingInput.length);
       if (timingInput && timingInput.length >= idx + 1) {
         const newInput = deepcopy(timingInput);
         newInput[idx] = value;
@@ -180,6 +214,41 @@ const InputStory = (props: InputStoryProps) => {
     setStoryTextInput(newTextLineInput);
   };
 
+  const handleDuetCheckboxChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    const { name } = event.target;
+    // `${idx}-duet-singer-0`
+    const nameArray = name.split("-");
+    const idxName = nameArray[0];
+    const idx = toNumber(idxName);
+    const singerNumberString = nameArray[3];
+    const singerNumber = toNumber(singerNumberString);
+    if (!isNaN(idx) && !isNaN(singerNumber)) {
+      const newDuetParts = deepcopy(duetParts);
+      newDuetParts[idx][singerNumber] = checked;
+      const newDuetPartInput = newDuetParts.map((checkboxValues) =>
+        getDuetPartInput(checkboxValues)
+      );
+      setDuetParts(newDuetParts);
+      setDuetPartInput(newDuetPartInput);
+    }
+  };
+
+  const getDuetPartInput = (
+    checkboxes: [boolean, boolean]
+  ): DuetPart | undefined => {
+    if (isEqual(checkboxes, [true, false])) {
+      return "1";
+    } else if (isEqual(checkboxes, [false, true])) {
+      return "2";
+    } else if (isEqual(checkboxes, [true, true])) {
+      return "both";
+    }
+    return undefined;
+  };
+
   return (
     <Paper elevation={2}>
       <Typography component="h6">
@@ -234,10 +303,15 @@ const InputStory = (props: InputStoryProps) => {
             <Grid2 size="grow">
               <Typography>Song lyric</Typography>
             </Grid2>
+            <Grid2 size={1}>
+              <Typography>Duet parts</Typography>
+            </Grid2>
+            <Grid2 sx={{ minWidth: "40px" }} />
           </Grid2>
           {textLineInput.map((line, idx) => {
             const lineTimingKey = `${idx}-line-timing`;
             const storyLineKey = `${idx}-story-line`;
+            // const duetPart = duetPartInput ? duetPartInput[idx] : undefined;
             return (
               <Grid2
                 key={`${idx}-line`}
@@ -245,7 +319,9 @@ const InputStory = (props: InputStoryProps) => {
                 sx={{ justifyContent: "flex-start", alignItems: "center" }}
                 size={12}
               >
-                {addLine(idx)}
+                <Grid2 key={`${idx}-add-line`} size="auto">
+                  {addLine(idx)}
+                </Grid2>
                 <Grid2 size={2}>
                   <TextField
                     id={lineTimingKey}
@@ -267,11 +343,33 @@ const InputStory = (props: InputStoryProps) => {
                     fullWidth
                   />
                 </Grid2>
-                {removeLine(idx)}
+                <Grid2 size={1}>
+                  <Checkbox
+                    checked={duetParts[idx][0]}
+                    id={`${idx}-duet-singer-0`}
+                    name={`${idx}-duet-singer-0`}
+                    icon={<LooksOneOutlined />}
+                    checkedIcon={<LooksOne />}
+                    onChange={handleDuetCheckboxChange}
+                  />
+                  <Checkbox
+                    checked={duetParts[idx][1]}
+                    id={`${idx}-duet-singer-1`}
+                    name={`${idx}-duet-singer-1`}
+                    icon={<LooksTwoOutlined />}
+                    checkedIcon={<LooksTwo />}
+                    onChange={handleDuetCheckboxChange}
+                  />
+                </Grid2>
+                <Grid2 key={`${idx}-remove-line`} size={"auto"}>
+                  {removeLine(idx)}
+                </Grid2>
               </Grid2>
             );
           })}
-          {addLine("last")}
+          <Grid2 key="last-add-line" size="auto">
+            {addLine("last")}
+          </Grid2>
         </Grid2>
       ) : (
         <TextField
@@ -291,43 +389,39 @@ const InputStory = (props: InputStoryProps) => {
 
   function addLine(idx: number | "last") {
     return (
-      <Grid2 key={`${idx}-add-line`} size="auto">
-        <Tooltip title="Add a line above this">
-          <IconButton
-            name={`${idx}-add-line`}
-            sx={{ color: "gray" }}
-            onClick={handleAddLine(idx)}
-          >
-            <Publish />
-          </IconButton>
-        </Tooltip>
-      </Grid2>
+      <Tooltip title="Add a line above this">
+        <IconButton
+          name={`${idx}-add-line`}
+          sx={{ color: "gray" }}
+          onClick={handleAddLine(idx)}
+        >
+          <Publish />
+        </IconButton>
+      </Tooltip>
     );
   }
 
   function removeLine(idx: number) {
     const isDisabled = !isEmpty(textLineInput[idx]);
     return (
-      <Grid2 key={`${idx}-remove-line`} size={"auto"}>
-        <Tooltip
-          title={
-            isDisabled
-              ? "You must clear the text before removing the line"
-              : "Remove this line"
-          }
-        >
-          <span>
-            <IconButton
-              name={`${idx}-remove-line`}
-              sx={{ color: "red" }}
-              disabled={isDisabled}
-              onClick={handleRemoveLine(idx)}
-            >
-              <Cancel />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </Grid2>
+      <Tooltip
+        title={
+          isDisabled
+            ? "You must clear the text before removing the line"
+            : "Remove this line"
+        }
+      >
+        <span>
+          <IconButton
+            name={`${idx}-remove-line`}
+            sx={{ color: "red" }}
+            disabled={isDisabled}
+            onClick={handleRemoveLine(idx)}
+          >
+            <Cancel />
+          </IconButton>
+        </span>
+      </Tooltip>
     );
   }
 };

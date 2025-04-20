@@ -143,7 +143,13 @@ const MainContainer = () => {
       localStorage.setItem(TITLE_TEXT_KEY, titleText || "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storyTextInput, lineTimingInput, titleTextInput, songSelection]);
+  }, [
+    storyTextInput,
+    lineTimingInput,
+    titleTextInput,
+    duetParts,
+    songSelection,
+  ]);
 
   useEffect(() => {
     if (!isEmpty(titleTextInput))
