@@ -117,7 +117,7 @@ const InputStory = (props: InputStoryProps) => {
       });
       setDuetParts(duetParts);
     }
-  }, [duetPartInput]);
+  }, [duetPartInput, getDuetCheckboxValue]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

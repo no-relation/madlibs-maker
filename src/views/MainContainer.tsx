@@ -20,7 +20,6 @@ import {
   DuetPart,
   buildLrcFile,
   getAllSongData,
-  getParsedLyrics,
   getTitle,
 } from "../interfaces/LrcFileParser";
 import {
