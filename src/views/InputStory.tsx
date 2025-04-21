@@ -22,13 +22,13 @@ import {
   Publish,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import { duetColors, findDuetPartColor } from "./ShowStyles";
 import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
 import { SongOption } from "../SongOptions";
 import deepcopy from "deepcopy";
+import { findDuetPartColor } from "./ShowStyles";
 
 interface InputStoryProps {
   storyTextInput: string[];
@@ -117,7 +117,8 @@ const InputStory = (props: InputStoryProps) => {
       });
       setDuetParts(duetParts);
     }
-  }, [duetPartInput, getDuetCheckboxValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duetPartInput]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
