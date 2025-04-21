@@ -1,9 +1,20 @@
+import { DuetPart } from "../interfaces/LrcFileParser";
 import { SxProps } from "@mui/material/styles";
 
 export const duetColors = {
   1: "#d21919",
   2: "#673ab7",
   both: "#19d236",
+};
+
+export const findDuetPartColor = (
+  duetPartInput?: DuetPart
+): string | undefined => {
+  if (duetPartInput === undefined) {
+    return;
+  }
+
+  return duetColors[duetPartInput];
 };
 
 export const titleTextStyle: React.CSSProperties = {

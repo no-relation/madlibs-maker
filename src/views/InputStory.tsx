@@ -1,7 +1,6 @@
 import {
   Box,
   Checkbox,
-  Divider,
   FormControlLabel,
   Grid2,
   IconButton,
@@ -23,13 +22,13 @@ import {
   Publish,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
+import { duetColors, findDuetPartColor } from "./ShowStyles";
 import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
 import { SongOption } from "../SongOptions";
 import deepcopy from "deepcopy";
-import { duetColors } from "./ShowStyles";
 
 interface InputStoryProps {
   storyTextInput: string[];
@@ -108,11 +107,7 @@ const InputStory = (props: InputStoryProps) => {
 
   const getDuetPartColor = (idx: number): string | undefined => {
     const duetPartInput = getDuetPartInput(duetParts[idx]);
-    if (duetPartInput === undefined) {
-      return;
-    }
-
-    return duetColors[duetPartInput];
+    return findDuetPartColor(duetPartInput);
   };
 
   useEffect(() => {
