@@ -1,15 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import deepcopy from "deepcopy";
-import ReactAudioPlayer from "react-audio-player";
-import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import { Box, Paper } from "@mui/material";
+import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
+import {
+  findDuetPartColor,
+  finishedStoryStyles,
+  titleTextStyle,
+} from "./ShowStyles";
 import { isEmpty, isNil } from "lodash";
-import { finishedStoryStyles, titleTextStyle } from "./ShowStyles";
+import { useEffect, useRef, useState } from "react";
+
+import { DuetPart } from "../interfaces/LrcFileParser";
+import ReactAudioPlayer from "react-audio-player";
+import deepcopy from "deepcopy";
 
 interface FinishedStoryProps {
   titleTextInput?: string;
   storyTextInput: string[];
   lineTimingInput?: Array<number | undefined>;
+  duetPartInput?: DuetPart[];
   fillIns?: FillInType;
   mp3Upload?: string;
 }
@@ -19,6 +26,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
     titleTextInput,
     storyTextInput,
     lineTimingInput,
+    duetPartInput,
     fillIns,
     mp3Upload,
   } = props;
@@ -108,6 +116,18 @@ const FinishedStory = (props: FinishedStoryProps) => {
     console.error(e);
   };
 
+  const getLineColor = (idx: number): string => {
+    if (currentLineIndex === idx) {
+      if (duetPartInput) {
+        const foundColor = findDuetPartColor(duetPartInput[idx]);
+        return foundColor || "red";
+      }
+      return "red";
+    }
+
+    return "black";
+  };
+
   return (
     <Paper elevation={2}>
       {mp3Upload && (
@@ -130,9 +150,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
           <Box
             key={idx}
             ref={currentLineIndex === idx ? scrollRef : null}
-            sx={
-              currentLineIndex === idx ? { color: "red" } : { color: "black" }
-            }
+            sx={{ color: getLineColor(idx) }}
             dangerouslySetInnerHTML={{ __html: storyLine }}
           ></Box>
         ))}

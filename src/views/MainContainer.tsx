@@ -301,6 +301,7 @@ const MainContainer = () => {
           titleTextInput={titleTextInput}
           storyTextInput={storyTextInput}
           lineTimingInput={lineTimingInput}
+          duetPartInput={duetParts}
           fillIns={fillIns}
           mp3Upload={songSelection && songSelection.songFile}
         />
