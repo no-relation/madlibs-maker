@@ -437,7 +437,6 @@ const InputStory = (props: InputStoryProps) => {
         <Grid2 size={1}>
           <Checkbox
             sx={{
-              // color: getDuetPartColor(idx),
               "&.Mui-checked": { color: getDuetPartColor(idx) },
             }}
             checked={duetParts[idx][0]}
@@ -449,7 +448,6 @@ const InputStory = (props: InputStoryProps) => {
           />
           <Checkbox
             sx={{
-              // color: getDuetPartColor(idx),
               "&.Mui-checked": { color: getDuetPartColor(idx) },
             }}
             checked={duetParts[idx][1]}
