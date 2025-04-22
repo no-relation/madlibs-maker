@@ -1,6 +1,7 @@
-import { Box, Paper } from "@mui/material";
+import { Box, Grid2, Paper, SxProps, Theme } from "@mui/material";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
 import {
+  duetColors,
   findDuetPartColor,
   finishedStoryStyles,
   titleTextStyle,
@@ -128,18 +129,36 @@ const FinishedStory = (props: FinishedStoryProps) => {
     return "black";
   };
 
+  const getLegendStyle = (duetColor: string): SxProps<Theme> => {
+    const fontWeight =
+      getLineColor(currentLineIndex || 0) === duetColor ? "bold" : "inherit";
+
+    return { fontWeight, color: duetColor };
+  };
+
   return (
     <Paper elevation={2}>
       {mp3Upload && (
-        <ReactAudioPlayer
-          id="player"
-          controls
-          src={mp3Upload}
-          preload="auto"
-          listenInterval={50}
-          onListen={handleListen}
-          onError={handleError}
-        />
+        <Grid2 container size={12} spacing={6} alignItems="center">
+          <Grid2 size={4}>
+            <ReactAudioPlayer
+              id="player"
+              controls
+              src={mp3Upload}
+              preload="auto"
+              listenInterval={50}
+              onListen={handleListen}
+              onError={handleError}
+            />
+          </Grid2>
+          {duetPartInput && (
+            <Grid2 container>
+              <Grid2 sx={getLegendStyle(duetColors["1"])}>Singer 1</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors["2"])}>Singer 2</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors.both)}>Both Singers</Grid2>
+            </Grid2>
+          )}
+        </Grid2>
       )}
       <div
         style={titleTextStyle}
