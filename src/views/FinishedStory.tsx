@@ -38,15 +38,20 @@ const FinishedStory = (props: FinishedStoryProps) => {
     undefined
   );
    
-  const playKeys = ["KeyP", "Space"];
+  const playKeys = ["P", "Space"];
   const playerRef = useRef<ReactAudioPlayer | null>(null);
 
   useEffect(() => {
     const handleUserKeyPress = (event: KeyboardEvent) => {
-      const { code } = event;
+      const { key } = event;
       const audioPlayer = playerRef.current;
-      console.info("Play keys:", playKeys);
-      if (playKeys.includes(code) && audioPlayer !== null) {
+      console.log(event);
+      console.info("Play keys:", playKeys.join(", "));
+      if (
+        !isNil(key) &&
+        playKeys.includes(key.toLowerCase()) &&
+        audioPlayer !== null
+      ) {
         const audioElement = audioPlayer.audioEl.current;
         if (audioElement !== null) {
           if (audioElement.paused) {
@@ -57,10 +62,14 @@ const FinishedStory = (props: FinishedStoryProps) => {
         }
       }
     };
-
-    window.addEventListener("keyup", handleUserKeyPress);
+    const storyTab = document.getElementById("storyTab");
+    if (!isNil(storyTab)) {
+      storyTab.addEventListener("keyup", handleUserKeyPress);
+    }
     return () => {
-      window.removeEventListener("keyup", handleUserKeyPress);
+      if (!isNil(storyTab)) {
+        storyTab.removeEventListener("keyup", handleUserKeyPress);
+      }
     };
   }, []);
 
@@ -155,21 +164,21 @@ const FinishedStory = (props: FinishedStoryProps) => {
     return "black";
   };
 
-  const getLegendStyle = (
-    duetColor: string,
-    lockBold?: boolean
-  ): SxProps<Theme> => {
-    const fontWeight = lockBold
-      ? "bold"
-      : getLineColor(currentLineIndex || 0) === duetColor
-      ? "bold"
-      : "inherit";
+  const getLegendStyle = (duetColor: string): SxProps<Theme> => {
+    const fontWeight =
+      getLineColor(currentLineIndex || 0) === duetColor ? "bold" : "inherit";
 
     return { fontWeight, color: duetColor };
   };
 
+  const getLineStyle = (idx: number): SxProps<Theme> => {
+    const fontWeight = currentLineIndex === idx ? "bold" : "inherit";
+    const color = getLineColor(idx);
+    return { fontWeight, color };
+  };
+
   return (
-    <Paper elevation={2}>
+    <Paper elevation={2} id="storyTab">
       {mp3Upload && (
         <Grid2 container size={12} spacing={6} alignItems="center">
           <Grid2 size={4}>
@@ -186,11 +195,9 @@ const FinishedStory = (props: FinishedStoryProps) => {
           </Grid2>
           {duetPartInput && (
             <Grid2 container>
-              <Grid2 sx={getLegendStyle(duetColors["1"], true)}>Singer 1</Grid2>
-              <Grid2 sx={getLegendStyle(duetColors["2"], true)}>Singer 2</Grid2>
-              <Grid2 sx={getLegendStyle(duetColors.both, true)}>
-                Both Singers
-              </Grid2>
+              <Grid2 sx={getLegendStyle(duetColors["1"])}>Singer 1</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors["2"])}>Singer 2</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors.both)}>Both Singers</Grid2>
             </Grid2>
           )}
         </Grid2>
@@ -204,7 +211,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
           <Box
             key={idx}
             ref={currentLineIndex === idx ? scrollRef : null}
-            sx={{ color: getLineColor(idx) }}
+            sx={getLineStyle(idx)}
             dangerouslySetInnerHTML={{ __html: storyLine }}
           ></Box>
         ))}
