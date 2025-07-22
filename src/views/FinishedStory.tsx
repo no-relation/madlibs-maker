@@ -38,6 +38,32 @@ const FinishedStory = (props: FinishedStoryProps) => {
     undefined
   );
    
+  const playKeys = ["KeyP", "Space"];
+  const playerRef = useRef<ReactAudioPlayer | null>(null);
+
+  useEffect(() => {
+    const handleUserKeyPress = (event: KeyboardEvent) => {
+      const { code } = event;
+      const audioPlayer = playerRef.current;
+      console.info("Play keys:", playKeys);
+      if (playKeys.includes(code) && audioPlayer !== null) {
+        const audioElement = audioPlayer.audioEl.current;
+        if (audioElement !== null) {
+          if (audioElement.paused) {
+            audioElement.play();
+          } else {
+            audioElement.pause();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keyup", handleUserKeyPress);
+    return () => {
+      window.removeEventListener("keyup", handleUserKeyPress);
+    };
+  }, []);
+
   useEffect(() => {
     if (fillIns) {
       let newText = deepcopy(storyTextInput);
@@ -149,6 +175,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
           <Grid2 size={4}>
             <ReactAudioPlayer
               id="player"
+              ref={playerRef}
               controls
               src={mp3Upload}
               preload="auto"
