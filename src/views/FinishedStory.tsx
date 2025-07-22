@@ -37,7 +37,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
     undefined
   );
-
+   
   useEffect(() => {
     if (fillIns) {
       let newText = deepcopy(storyTextInput);
@@ -129,9 +129,15 @@ const FinishedStory = (props: FinishedStoryProps) => {
     return "black";
   };
 
-  const getLegendStyle = (duetColor: string): SxProps<Theme> => {
-    const fontWeight =
-      getLineColor(currentLineIndex || 0) === duetColor ? "bold" : "inherit";
+  const getLegendStyle = (
+    duetColor: string,
+    lockBold?: boolean
+  ): SxProps<Theme> => {
+    const fontWeight = lockBold
+      ? "bold"
+      : getLineColor(currentLineIndex || 0) === duetColor
+      ? "bold"
+      : "inherit";
 
     return { fontWeight, color: duetColor };
   };
@@ -153,9 +159,11 @@ const FinishedStory = (props: FinishedStoryProps) => {
           </Grid2>
           {duetPartInput && (
             <Grid2 container>
-              <Grid2 sx={getLegendStyle(duetColors["1"])}>Singer 1</Grid2>
-              <Grid2 sx={getLegendStyle(duetColors["2"])}>Singer 2</Grid2>
-              <Grid2 sx={getLegendStyle(duetColors.both)}>Both Singers</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors["1"], true)}>Singer 1</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors["2"], true)}>Singer 2</Grid2>
+              <Grid2 sx={getLegendStyle(duetColors.both, true)}>
+                Both Singers
+              </Grid2>
             </Grid2>
           )}
         </Grid2>
