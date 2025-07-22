@@ -31,6 +31,7 @@ export const finishedStoryStyles: React.CSSProperties = {
   margin: "1em 0",
   overflow: "auto",
   padding: "1em",
+  textAlign: "center",
 };
 
 export const resetStyle: React.CSSProperties = {

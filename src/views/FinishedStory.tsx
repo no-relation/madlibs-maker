@@ -1,5 +1,6 @@
 import { Box, Grid2, Paper, SxProps, Theme } from "@mui/material";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import {
   duetColors,
   findDuetPartColor,
@@ -7,7 +8,6 @@ import {
   titleTextStyle,
 } from "./ShowStyles";
 import { isEmpty, isNil } from "lodash";
-import { useEffect, useRef, useState } from "react";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
 import ReactAudioPlayer from "react-audio-player";
@@ -37,6 +37,22 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
     undefined
   );
+
+  const playerRef = useRef<ReactAudioPlayer | null>(null);
+
+  const handleMainMouseClick = (_: MouseEvent<HTMLDivElement>) => {
+    const audioPlayer = playerRef.current;
+    if (audioPlayer !== null) {
+      const audioElement = audioPlayer.audioEl.current;
+      if (audioElement !== null) {
+        if (audioElement.paused) {
+          audioElement.play();
+        } else {
+          audioElement.pause();
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (fillIns) {
@@ -136,13 +152,20 @@ const FinishedStory = (props: FinishedStoryProps) => {
     return { fontWeight, color: duetColor };
   };
 
+  const getLineStyle = (idx: number): SxProps<Theme> => {
+    const fontWeight = currentLineIndex === idx ? "bold" : "inherit";
+    const color = getLineColor(idx);
+    return { fontWeight, color };
+  };
+
   return (
-    <Paper elevation={2}>
+    <Paper elevation={2} id="storyTab">
       {mp3Upload && (
         <Grid2 container size={12} spacing={6} alignItems="center">
           <Grid2 size={4}>
             <ReactAudioPlayer
               id="player"
+              ref={playerRef}
               controls
               src={mp3Upload}
               preload="auto"
@@ -164,12 +187,12 @@ const FinishedStory = (props: FinishedStoryProps) => {
         style={titleTextStyle}
         dangerouslySetInnerHTML={{ __html: finishedTitleTextInput || "" }}
       ></div>
-      <div style={finishedStoryStyles}>
+      <div style={finishedStoryStyles} onClick={handleMainMouseClick}>
         {finishedStoryText.map((storyLine, idx) => (
           <Box
             key={idx}
             ref={currentLineIndex === idx ? scrollRef : null}
-            sx={{ color: getLineColor(idx) }}
+            sx={getLineStyle(idx)}
             dangerouslySetInnerHTML={{ __html: storyLine }}
           ></Box>
         ))}
