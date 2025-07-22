@@ -37,22 +37,18 @@ const FinishedStory = (props: FinishedStoryProps) => {
   const [currentLineIndex, setCurrentLineIndex] = useState<number | undefined>(
     undefined
   );
-   
-  const playKeys = ["P", "Space"];
+
   const playerRef = useRef<ReactAudioPlayer | null>(null);
 
   useEffect(() => {
+    const playKeys = ["KeyP", "Space"];
     const handleUserKeyPress = (event: KeyboardEvent) => {
-      const { key } = event;
+      const { code } = event;
       const audioPlayer = playerRef.current;
-      console.log(event);
       console.info("Play keys:", playKeys.join(", "));
-      if (
-        !isNil(key) &&
-        playKeys.includes(key.toLowerCase()) &&
-        audioPlayer !== null
-      ) {
+      if (!isNil(code) && playKeys.includes(code) && audioPlayer !== null) {
         const audioElement = audioPlayer.audioEl.current;
+        console.log(audioElement);
         if (audioElement !== null) {
           if (audioElement.paused) {
             audioElement.play();
@@ -62,14 +58,9 @@ const FinishedStory = (props: FinishedStoryProps) => {
         }
       }
     };
-    const storyTab = document.getElementById("storyTab");
-    if (!isNil(storyTab)) {
-      storyTab.addEventListener("keyup", handleUserKeyPress);
-    }
+    window.addEventListener("keyup", handleUserKeyPress);
     return () => {
-      if (!isNil(storyTab)) {
-        storyTab.removeEventListener("keyup", handleUserKeyPress);
-      }
+      window.removeEventListener("keyup", handleUserKeyPress);
     };
   }, []);
 
