@@ -1,5 +1,6 @@
 import { Box, Grid2, Paper, SxProps, Theme } from "@mui/material";
 import { FillInType, isAtWordRepeated, regexAtWords } from "../interfaces";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import {
   duetColors,
   findDuetPartColor,
@@ -7,7 +8,6 @@ import {
   titleTextStyle,
 } from "./ShowStyles";
 import { isEmpty, isNil } from "lodash";
-import { useEffect, useRef, useState } from "react";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
 import ReactAudioPlayer from "react-audio-player";
@@ -40,29 +40,19 @@ const FinishedStory = (props: FinishedStoryProps) => {
 
   const playerRef = useRef<ReactAudioPlayer | null>(null);
 
-  useEffect(() => {
-    const playKeys = ["KeyP", "Space"];
-    const handleUserKeyPress = (event: KeyboardEvent) => {
-      const { code } = event;
-      const audioPlayer = playerRef.current;
-      console.info("Play keys:", playKeys.join(", "));
-      if (!isNil(code) && playKeys.includes(code) && audioPlayer !== null) {
-        const audioElement = audioPlayer.audioEl.current;
-        console.log(audioElement);
-        if (audioElement !== null) {
-          if (audioElement.paused) {
-            audioElement.play();
-          } else {
-            audioElement.pause();
-          }
+  const handleMainMouseClick = (_: MouseEvent<HTMLDivElement>) => {
+    const audioPlayer = playerRef.current;
+    if (audioPlayer !== null) {
+      const audioElement = audioPlayer.audioEl.current;
+      if (audioElement !== null) {
+        if (audioElement.paused) {
+          audioElement.play();
+        } else {
+          audioElement.pause();
         }
       }
-    };
-    window.addEventListener("keyup", handleUserKeyPress);
-    return () => {
-      window.removeEventListener("keyup", handleUserKeyPress);
-    };
-  }, []);
+    }
+  };
 
   useEffect(() => {
     if (fillIns) {
@@ -197,7 +187,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
         style={titleTextStyle}
         dangerouslySetInnerHTML={{ __html: finishedTitleTextInput || "" }}
       ></div>
-      <div style={finishedStoryStyles}>
+      <div style={finishedStoryStyles} onClick={handleMainMouseClick}>
         {finishedStoryText.map((storyLine, idx) => (
           <Box
             key={idx}
