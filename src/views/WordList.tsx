@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FillInType } from "../interfaces";
 import {
+  Button,
   List,
   ListItem,
   ListSubheader,
@@ -8,9 +7,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { isNaN, startCase, toLower } from "lodash";
+
+import { FillInType } from "../interfaces";
 import deepcopy from "deepcopy";
-import { Button } from "@material-ui/core";
 import { resetStyle } from "./ShowStyles";
 
 interface WordListProps {

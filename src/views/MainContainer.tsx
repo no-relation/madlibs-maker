@@ -1,10 +1,13 @@
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
   DialogContent,
   Tab,
   Tabs,
   Typography,
+  styled,
 } from "@mui/material";
 import {
   CustomTabPanel,
@@ -15,7 +18,6 @@ import {
   isAtWordRepeated,
   regexAtWords,
 } from "../interfaces";
-import { Dialog, DialogActions, styled } from "@material-ui/core";
 import {
   DuetPart,
   buildLrcFile,
@@ -37,6 +39,18 @@ import FinishedStory from "./FinishedStory";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import deepcopy from "deepcopy";
+
+// import { Dialog, DialogActions, styled } from "@material-ui/core";
+
+
+
+
+
+
+
+
+
+
 
 // import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 
