@@ -148,7 +148,14 @@ const InputStory = (props: InputStoryProps) => {
     setTimingInput(newInput);
   };
 
-  // const handleShiftLineTiming = ()
+  const handleShiftLineTiming = (shiftInMs: number) => {
+    if (lineTimingInput) {
+      const newLineTimingInput = lineTimingInput.map((ti) =>
+        ti === undefined ? undefined : ti! + shiftInMs
+      );
+      setLineTimingInput(newLineTimingInput);
+    }
+  };
 
   const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     const { name } = event.target;
@@ -279,6 +286,10 @@ const InputStory = (props: InputStoryProps) => {
     }
   };
 
+  const TimeShifter = (): JSX.Element => {
+    return <>time shifter here</>;
+  };
+
   return (
     <Paper elevation={2}>
       <Typography component="h6">
@@ -329,6 +340,7 @@ const InputStory = (props: InputStoryProps) => {
             <Grid2 sx={{ minWidth: "40px" }} />
             <Grid2 size={2}>
               <Typography>Start Time</Typography>
+              <TimeShifter />
             </Grid2>
             <Grid2 size="grow">
               <Typography>Song lyric</Typography>
