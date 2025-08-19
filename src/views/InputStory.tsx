@@ -26,7 +26,7 @@ import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
-import { SongOption } from "../SongOptions";
+import { SongOption } from "../interfaces/SongOptions";
 import deepcopy from "deepcopy";
 import { findDuetPartColor } from "./ShowStyles";
 

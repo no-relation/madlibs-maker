@@ -30,7 +30,7 @@ import {
   getLrcFile,
   getSongOptions,
   saveSongData,
-} from "../SongOptions";
+} from "../interfaces/SongOptions";
 import React, { useEffect, useRef, useState } from "react";
 import { getShowStyle, resetStyle } from "./ShowStyles";
 import { isEmpty, isEqual, isNil } from "lodash";
@@ -39,20 +39,6 @@ import FinishedStory from "./FinishedStory";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import deepcopy from "deepcopy";
-
-// import { Dialog, DialogActions, styled } from "@material-ui/core";
-
-
-
-
-
-
-
-
-
-
-
-// import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 
 const MainContainer = () => {
   const SONG_SELECTION_TITLE = "songSelectionTitle";
