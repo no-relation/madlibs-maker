@@ -15,10 +15,13 @@ See this in action [here](https://no-relation.github.io/madlibs-maker/).
     - [hh-mm-ss](https://www.npmjs.com/package/hh-mm-ss), for parsing of time strings
 
 ### TODO list
-(as of 12/29/2024)
+(as of 8/09/2025)
 
-1. highlighting for story playback
-1. autoscrolling for story playback
-1. make it backwards compatible for plain txt files
+1. ~~highlighting for story playback~~
+1. ~~autoscrolling for story playback~~
+1. ~~make it backwards compatible for plain txt files~~
 1. file uploads: LRC + MP3 files
 1. build an API for it (prerequisite for previous?)
+OR
+1. Spotify integration
+    - Automatically download lyrics
