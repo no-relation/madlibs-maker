@@ -70,7 +70,7 @@ const MainContainer = () => {
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
     undefined
   );
-  const [duetParts, setDuetParts] = useState<DuetPart[] | undefined>();
+  const [duetParts, setDuetParts] = useState<DuetPart[]>([]);
 
   const handleSetSelectedSong = (songOption?: SongOption) => {
     if (songOption) {

@@ -37,8 +37,8 @@ interface InputStoryProps {
   setTitleTextInput: (titleText?: string) => void;
   lineTimingInput: Array<number | undefined> | undefined;
   setLineTimingInput: (lineTiming?: Array<number | undefined>) => void;
-  duetPartInput?: DuetPart[];
-  setDuetPartInput: (duetPart?: DuetPart[]) => void;
+  duetPartInput: DuetPart[];
+  setDuetPartInput: (duetPart: DuetPart[]) => void;
   useUploadedSongs: boolean;
   setUseUploadedSongs: (yesPlease: boolean) => void;
   songOptions: SongOption[];
@@ -147,6 +147,8 @@ const InputStory = (props: InputStoryProps) => {
     newInput[idx] = value;
     setTimingInput(newInput);
   };
+
+  // const handleShiftLineTiming = ()
 
   const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     const { name } = event.target;
