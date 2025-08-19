@@ -127,17 +127,25 @@ const InputStory = (props: InputStoryProps) => {
       setTitleInput(value);
     } else if (name.includes("timing")) {
       if (timingInput && timingInput.length >= idx + 1) {
-        const newInput = deepcopy(timingInput);
-        newInput[idx] = value;
-        setTimingInput(newInput);
+        handleTimingLineChange(value, idx);
       }
     } else if (name.includes("story-line")) {
-      const newInput = deepcopy(textLineInput);
-      newInput[idx] = value;
-      setTextLineInput(newInput);
+      handleTextLineChange(value, idx);
     } else {
       setTextLineInput(value.split("\n"));
     }
+  };
+
+  const handleTextLineChange = (value: string, idx: number) => {
+    const newInput = deepcopy(textLineInput);
+    newInput[idx] = value;
+    setTextLineInput(newInput);
+  };
+
+  const handleTimingLineChange = (value: string, idx: number) => {
+    const newInput = deepcopy(timingInput);
+    newInput[idx] = value;
+    setTimingInput(newInput);
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
