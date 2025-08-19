@@ -1,9 +1,20 @@
 import {
+  AddCircleOutline,
+  Cancel,
+  LooksOne,
+  LooksOneOutlined,
+  LooksTwo,
+  LooksTwoOutlined,
+  Publish,
+  RemoveCircleOutline,
+} from "@material-ui/icons";
+import {
   Box,
   Checkbox,
   FormControlLabel,
   Grid2,
   IconButton,
+  InputAdornment,
   MenuItem,
   Paper,
   Select,
@@ -13,14 +24,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Cancel,
-  LooksOne,
-  LooksOneOutlined,
-  LooksTwo,
-  LooksTwoOutlined,
-  Publish,
-} from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
@@ -69,6 +72,7 @@ const InputStory = (props: InputStoryProps) => {
   );
   // const [useLineTimings, setUseLineTimings] = useState<boolean>(false);
   const [duetParts, setDuetParts] = useState<[boolean, boolean][]>([]);
+  const [timingShift, setTimingShift] = useState(10);
 
   useEffect(() => {
     setTextLineInput(storyTextInput);
@@ -148,11 +152,18 @@ const InputStory = (props: InputStoryProps) => {
     setTimingInput(newInput);
   };
 
-  const handleShiftLineTiming = (shiftInMs: number) => {
+  const shiftLineTiming = (shiftInMs: number) => {
     if (lineTimingInput) {
-      const newLineTimingInput = lineTimingInput.map((ti) =>
-        ti === undefined ? undefined : ti! + shiftInMs
-      );
+      const newLineTimingInput = lineTimingInput.map((ti) => {
+        if (ti === undefined) {
+          return undefined;
+        }
+        let newTi = ti! + shiftInMs;
+        if (newTi < 0) {
+          newTi = 0;
+        }
+        return newTi;
+      });
       setLineTimingInput(newLineTimingInput);
     }
   };
@@ -287,7 +298,57 @@ const InputStory = (props: InputStoryProps) => {
   };
 
   const TimeShifter = (): JSX.Element => {
-    return <>time shifter here</>;
+    return (
+      <Box sx={{ display: "flex", width: "8.5em", margin: "0 auto" }}>
+        <Tooltip title="subtract from all times" placement="top">
+          <IconButton
+            aria-label="decrease-time-shift"
+            size="small"
+            onClick={handleTimeShiftClick}
+            name="subtract"
+          >
+            <RemoveCircleOutline />
+          </IconButton>
+        </Tooltip>
+        <TextField
+          label="Shift time"
+          margin="none"
+          size="small"
+          variant="standard"
+          value={timingShift}
+          onChange={handleTimeShiftAmtUpdate}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">ms</InputAdornment>,
+            },
+          }}
+        />
+        <Tooltip title="add to all times" placement="top">
+          <IconButton
+            aria-label="increase-time-shift"
+            size="small"
+            onClick={handleTimeShiftClick}
+            name="add"
+          >
+            <AddCircleOutline />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  };
+
+  const handleTimeShiftAmtUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setTimingShift(parseInt(value));
+  };
+
+  const handleTimeShiftClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name } = e.currentTarget;
+    if (name === "subtract") {
+      shiftLineTiming(timingShift * -1);
+    } else {
+      shiftLineTiming(timingShift);
+    }
   };
 
   return (
@@ -336,7 +397,11 @@ const InputStory = (props: InputStoryProps) => {
 
       {useUploadedSongs ? (
         <Grid2 container>
-          <Grid2 container size={12} sx={{ backgroundColor: "#80808080" }}>
+          <Grid2
+            container
+            size={12}
+            sx={{ backgroundColor: "#80808080", textAlign: "center" }}
+          >
             <Grid2 sx={{ minWidth: "40px" }} />
             <Grid2 size={2}>
               <Typography>Start Time</Typography>
