@@ -4,6 +4,15 @@ const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
   {
+    artist: "They Might Be Giants",
+    title: "Birdhouse In Your Soul",
+    lrcFile:
+      dataFolders +
+      "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
+    songFile:
+      dataFolders + "Birdhouse_In_Your_Soul/02 Birdhouse In Your Soul.mp3",
+  },
+  {
     artist: "Bill Medley & Jennifer Warnes",
     title: "(I've Had) The Time Of My Life",
     lrcFile: dataFolders + "The_Time_Of_My_Life/The_Time_Of_My_Life.lrc",
