@@ -3,14 +3,15 @@ import { isEmpty, isNil } from "lodash";
 const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
-  // {
-  //   artist: "They Might Be Giants",
-  //   title: "Birdhouse In Your Soul",
-  //   lrcFile:
-  //     dataFolders +
-  //     "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
-  //   songFile: dataFolders + "Birdhouse_In_Your_Soul/Birdhouse In Your Soul.mp3",
-  // },
+  {
+    artist: "They Might Be Giants",
+    title: "Birdhouse In Your Soul",
+    lrcFile:
+      dataFolders +
+      "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
+    songFile:
+      dataFolders + "Birdhouse_In_Your_Soul/02 Birdhouse In Your Soul.mp3",
+  },
   {
     artist: "Bill Medley & Jennifer Warnes",
     title: "(I've Had) The Time Of My Life",
@@ -25,18 +26,6 @@ const rawSongOptions: SongOption[] = [
     songFile:
       dataFolders + "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart.mp3",
   },
-  {
-    artist: "Lionel Richie",
-    title: "Endless Love",
-    lrcFile: dataFolders + "Endless_Love/Endless_Love.lrc",
-    songFile: dataFolders + "Endless_Love/Endless_Love.mp3",
-  },
-  // {
-  //   artist: "Barenaked Ladies",
-  //   title: "Be My Yoko Ono",
-  //   lrcFile: dataFolders + "Be_My_Yoko_Ono/Be_My_Yoko_Ono.lrc",
-  //   songFile: dataFolders + "Be_My_Yoko_Ono/Be My Yoko Ono.mp3",
-  // },
 ];
 
 export const getSongOptions = (): SongOption[] => {

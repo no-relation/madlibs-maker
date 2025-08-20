@@ -17,7 +17,7 @@ interface FinishedStoryProps {
   titleTextInput?: string;
   storyTextInput: string[];
   lineTimingInput?: Array<number | undefined>;
-  duetPartInput?: DuetPart[];
+  duetPartInput: DuetPart[];
   fillIns?: FillInType;
   mp3Upload?: string;
 }
@@ -39,6 +39,8 @@ const FinishedStory = (props: FinishedStoryProps) => {
   );
 
   const playerRef = useRef<ReactAudioPlayer | null>(null);
+
+  const isDuet = duetPartInput.some((part) => !isNil(part));
 
   const handleMainMouseClick = (_: MouseEvent<HTMLDivElement>) => {
     const audioPlayer = playerRef.current;
@@ -135,7 +137,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
 
   const getLineColor = (idx: number): string => {
     if (currentLineIndex === idx) {
-      if (duetPartInput) {
+      if (isDuet) {
         const foundColor = findDuetPartColor(duetPartInput[idx]);
         return foundColor || "red";
       }
@@ -174,7 +176,7 @@ const FinishedStory = (props: FinishedStoryProps) => {
               onError={handleError}
             />
           </Grid2>
-          {duetPartInput && (
+          {isDuet && (
             <Grid2 container>
               <Grid2 sx={getLegendStyle(duetColors["1"])}>Singer 1</Grid2>
               <Grid2 sx={getLegendStyle(duetColors["2"])}>Singer 2</Grid2>

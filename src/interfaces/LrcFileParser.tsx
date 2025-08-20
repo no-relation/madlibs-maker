@@ -11,7 +11,7 @@ interface SongData {
   lineTiming?: number[];
   text: string[];
   title?: string;
-  duetParts?: DuetPart[];
+  duetParts: DuetPart[];
 }
 
 export const getAllSongData = (text?: string | null): SongData => {
@@ -108,7 +108,7 @@ export const getLyricTimings = (text?: string | null): number[] | undefined => {
 };
 
 export type DuetPart = "1" | "2" | "both" | undefined;
-export const getDuetParts = (text?: string | null): DuetPart[] | undefined => {
+export const getDuetParts = (text?: string | null): DuetPart[] => {
   if (text) {
     const lyricLines = getLyricLines(text);
     if (lyricLines) {
@@ -125,24 +125,9 @@ export const getDuetParts = (text?: string | null): DuetPart[] | undefined => {
         }
       });
     }
-    // const parsed = getParsedLyricData(text);
-    // if (parsed) {
-    //   return parsed.map((line) => {
-    //     if (isLyricLine(line)) {
-    //       switch (line.content.slice(0, 2)) {
-    //         case "M:":
-    //           return "1";
-    //         case "F:":
-    //           return "2";
-    //         case "D:":
-    //           return "both";
-    //         default:
-    //           return undefined;
-    //       }
-    //     }
-    //   });
-    // }
   }
+
+  return [];
 };
 
 const getParsedLyricData = (text: string) => {
