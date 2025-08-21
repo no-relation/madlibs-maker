@@ -436,6 +436,7 @@ const InputStory = (props: InputStoryProps) => {
                     value={timingInput[idx]}
                     onChange={handleTextChange}
                     onBlur={handleBlur}
+                    fullWidth
                   />
                 </Grid2>
                 <Grid2 size="grow">
@@ -444,7 +445,6 @@ const InputStory = (props: InputStoryProps) => {
                     name={storyLineKey}
                     onChange={handleTextChange}
                     onBlur={handleBlur}
-                    multiline
                     value={line}
                     fullWidth
                   />
