@@ -43,7 +43,7 @@ export function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
-export const resetDialogTypeList = ["storyText", "fillIns"];
+export const resetDialogTypeList = ["storyText", "fillIns", "lineTimings"];
 export type ResetDialogType = (typeof resetDialogTypeList)[number];
 export const isResetDialogType = (str: string): str is ResetDialogType => {
   return resetDialogTypeList.some((t) => str === t);

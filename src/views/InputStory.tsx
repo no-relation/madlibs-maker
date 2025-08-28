@@ -6,6 +6,7 @@ import {
   LooksTwo,
   LooksTwoOutlined,
   Publish,
+  Refresh,
   RemoveCircleOutline,
 } from "@material-ui/icons";
 import {
@@ -40,6 +41,7 @@ interface InputStoryProps {
   setTitleTextInput: (titleText?: string) => void;
   lineTimingInput: Array<number | undefined> | undefined;
   setLineTimingInput: (lineTiming?: Array<number | undefined>) => void;
+  resetLineTimingInput: () => void;
   duetPartInput: DuetPart[];
   setDuetPartInput: (duetPart: DuetPart[]) => void;
   useUploadedSongs: boolean;
@@ -56,6 +58,7 @@ const InputStory = (props: InputStoryProps) => {
     setTitleTextInput,
     lineTimingInput,
     setLineTimingInput,
+    resetLineTimingInput,
     duetPartInput,
     setDuetPartInput,
     useUploadedSongs,
@@ -299,7 +302,13 @@ const InputStory = (props: InputStoryProps) => {
 
   const TimeShifter = (): JSX.Element => {
     return (
-      <Box sx={{ display: "flex", width: "8.5em", margin: "0 auto" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+        }}
+      >
         <Tooltip title="subtract from all times" placement="top">
           <IconButton
             aria-label="decrease-time-shift"
@@ -311,7 +320,7 @@ const InputStory = (props: InputStoryProps) => {
           </IconButton>
         </Tooltip>
         <TextField
-          label="Shift time"
+          label="Shift"
           margin="none"
           size="small"
           variant="standard"
@@ -319,9 +328,14 @@ const InputStory = (props: InputStoryProps) => {
           onChange={handleTimeShiftAmtUpdate}
           slotProps={{
             input: {
-              endAdornment: <InputAdornment position="end">ms</InputAdornment>,
+              endAdornment: (
+                <InputAdornment position="end" sx={{ alignItems: "baseline" }}>
+                  ms
+                </InputAdornment>
+              ),
             },
           }}
+          sx={{ width: "4em" }}
         />
         <Tooltip title="add to all times" placement="top">
           <IconButton
@@ -331,6 +345,17 @@ const InputStory = (props: InputStoryProps) => {
             name="add"
           >
             <AddCircleOutline />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="reset lyric timings" placement="top">
+          <IconButton
+            aria-label="reset-lyric-timings"
+            size="small"
+            onClick={resetLineTimingInput}
+            name="reset"
+            color="error"
+          >
+            <Refresh />
           </IconButton>
         </Tooltip>
       </Box>

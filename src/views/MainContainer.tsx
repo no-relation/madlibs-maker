@@ -22,6 +22,7 @@ import {
   DuetPart,
   buildLrcFile,
   getAllSongData,
+  getLyricTimings,
   getTitle,
 } from "../interfaces/LrcFileParser";
 import {
@@ -256,6 +257,11 @@ const MainContainer = () => {
     setResetDialogText("Are you certain you want to reset the fill-in words?");
   };
 
+  const handleResetLineTimings = () => {
+    setResetDialogType("lineTimings");
+    setResetDialogText("Reset lyric timings to original input?");
+  };
+
   type TabValueType = {
     label: string;
     component?: React.ReactNode;
@@ -273,6 +279,7 @@ const MainContainer = () => {
           setTitleTextInput={setTitleTextInput}
           lineTimingInput={lineTimingInput || []}
           setLineTimingInput={setLineTimingInput}
+          resetLineTimingInput={handleResetLineTimings}
           duetPartInput={duetParts}
           setDuetPartInput={setDuetParts}
           useUploadedSongs={useUploadedSongs}
@@ -340,6 +347,9 @@ const MainContainer = () => {
         case "fillIns":
           resetFillIns();
           break;
+        case "lineTimings":
+          resetLineTimings();
+          break;
       }
     }
   };
@@ -358,6 +368,11 @@ const MainContainer = () => {
     // setStoryTextInput(demoStoryText.split("\n"));
     // setLineTimingInput([]);
     // setStoryTextInput(getParsedLyrics(lrcFile));
+  };
+
+  const resetLineTimings = () => {
+    const originalLineTimings = getLyricTimings(lrcFile);
+    setLineTimingInput(originalLineTimings);
   };
 
   const [tabIndexValue, setTabIndexValue] = useState(0);
