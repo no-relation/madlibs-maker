@@ -35,22 +35,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { getShowStyle, resetStyle } from "./ShowStyles";
 import { isEmpty, isEqual, isNil } from "lodash";
 
+import AddSongDialog from "./AddSongDialog";
 import FinishedStory from "./FinishedStory";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import deepcopy from "deepcopy";
 
 // import { Dialog, DialogActions, styled } from "@material-ui/core";
-
-
-
-
-
-
-
-
-
-
 
 // import { demoStoryText, demoStoryTitle, getUniqueRandomWord } from "./DemoText";
 
@@ -85,6 +76,7 @@ const MainContainer = () => {
     undefined
   );
   const [duetParts, setDuetParts] = useState<DuetPart[] | undefined>();
+  const [addSongDialogOpen, setAddSongDialogOpen] = useState(false);
 
   const handleSetSelectedSong = (songOption?: SongOption) => {
     if (songOption) {
@@ -294,6 +286,7 @@ const MainContainer = () => {
           songOptions={songOptions}
           selectedSong={songSelection}
           setSelectedSong={handleSetSelectedSong}
+          setAddSongDialogOpen={setAddSongDialogOpen}
         />
       ),
     },
@@ -460,6 +453,10 @@ const MainContainer = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <AddSongDialog
+        addSongDialogOpen={addSongDialogOpen}
+        setAddSongDialogOpen={setAddSongDialogOpen}
+      />
     </Box>
   );
 };

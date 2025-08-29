@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   Grid2,
@@ -44,7 +45,9 @@ interface InputStoryProps {
   songOptions: SongOption[];
   selectedSong?: SongOption;
   setSelectedSong: (songOption?: SongOption) => void;
+  setAddSongDialogOpen: (open: boolean) => void;
 }
+
 const InputStory = (props: InputStoryProps) => {
   let {
     storyTextInput,
@@ -60,6 +63,7 @@ const InputStory = (props: InputStoryProps) => {
     songOptions,
     selectedSong,
     setSelectedSong,
+    setAddSongDialogOpen,
   } = props;
 
   const [textLineInput, setTextLineInput] = useState(storyTextInput);
@@ -176,6 +180,7 @@ const InputStory = (props: InputStoryProps) => {
       </Select>
     );
   };
+
   const handleSongChange = (event: SelectChangeEvent) => {
     const songPick = songOptions.find(
       (song) => song.title === event.target.value
@@ -269,6 +274,10 @@ const InputStory = (props: InputStoryProps) => {
     }
   };
 
+  const handleAddSongClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAddSongDialogOpen(true);
+  };
+
   return (
     <Paper elevation={2}>
       <Typography component="h6">
@@ -276,7 +285,9 @@ const InputStory = (props: InputStoryProps) => {
         want to MadLib with the type of word, starting with an @. You can
         hyphenate or underscore multiple "@-words", but no spaces.
       </Typography>
-      <Box sx={{ display: "flex", padding: "1em" }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "space-around", padding: "1em" }}
+      >
         <FormControlLabel
           label="Use line-by-line fields?"
           control={
@@ -285,6 +296,11 @@ const InputStory = (props: InputStoryProps) => {
           sx={{ marginLeft: "0.5em" }}
         />
         {useUploadedSongs && renderSongSelection()}
+        <Tooltip title="Search Spotify for a karaoke track">
+          <Button variant="outlined" color="info" onClick={handleAddSongClick}>
+            Add song
+          </Button>
+        </Tooltip>
       </Box>
       {/* {useUploadedSongs && (
         <Typography component="h6">

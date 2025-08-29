@@ -1,3 +1,8 @@
+const SpotifyApi = () => {
+  console.log("LrcLibApi is loading");
+};
+
+export default SpotifyApi;
 // check if valid spotify auth token
 //  if not:
 //   get spotify auth token
