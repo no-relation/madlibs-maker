@@ -61,11 +61,11 @@ const AddSongDialog = (props: AddSongDialogProps) => {
 
   const [showIdInput, setShowIdInput] = useState(isMissingClientId());
 
-  const [missingId, setMissingId] = useState(isMissingClientId());
+  const [isMissingId, setIsMissingId] = useState(isMissingClientId());
 
   useEffect(() => {
-    setMissingId(isMissingClientId());
-  }, [clientId, isMissingClientId, setMissingId]);
+    setIsMissingId(isMissingClientId());
+  }, [clientId, isMissingClientId, setIsMissingId]);
 
   const handleClientIdUpdate = (
     event: React.ChangeEvent<HTMLTextAreaElement>
@@ -89,7 +89,7 @@ const AddSongDialog = (props: AddSongDialogProps) => {
   };
 
   const handleAddClientId = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMissingId(false);
+    setIsMissingId(false);
     setShowIdInput(false);
   };
 
@@ -138,7 +138,7 @@ const AddSongDialog = (props: AddSongDialogProps) => {
             color="success"
             variant="contained"
             onClick={handleAddClientId}
-            disabled={missingId}
+            disabled={isMissingId}
           >
             Search Spotify
           </Button>
