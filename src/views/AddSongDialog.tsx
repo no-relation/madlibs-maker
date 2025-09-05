@@ -88,48 +88,18 @@ const AddSongDialog = (props: AddSongDialogProps) => {
     }
   };
 
-  const handleAddMissingId = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddClientId = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMissingId(false);
     setShowIdInput(false);
   };
 
-  const InputClientIdContent = (): JSX.Element => {
-    return (
-      <DialogContent>
-        <TextField
-          id="client-id"
-          name="id"
-          value={clientId.id}
-          onChange={handleClientIdUpdate}
-          variant="outlined"
-          label="Client ID"
-        />
-        <TextField
-          id="client-secret"
-          name="secret"
-          value={clientId.secret}
-          onChange={handleClientIdUpdate}
-          variant="outlined"
-          label="Client Secret"
-        />
-        <Button
-          color="success"
-          variant="contained"
-          onClick={handleAddMissingId}
-          disabled={missingId}
-        >
-          Search Spotify
-        </Button>
-        <DialogContentText>
-          You can get your own client ID and secret by registering with{" "}
-          <Link href="https://developer.spotify.com/">
-            Spotify's developer program.
-          </Link>{" "}
-          Or you can ask Eddie. (If Eddie doesn't know you, there will be many
-          questions.)
-        </DialogContentText>
-      </DialogContent>
-    );
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleUpdateSearchTerms = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const value = event.target.value;
+    setSearchTerm(value);
   };
 
   return (
@@ -147,13 +117,54 @@ const AddSongDialog = (props: AddSongDialogProps) => {
         <Close />
       </IconButton>
       {showIdInput ? (
-        <InputClientIdContent />
+        <DialogContent>
+          <TextField
+            id="client-id"
+            name="id"
+            value={clientId.id}
+            onChange={handleClientIdUpdate}
+            variant="outlined"
+            label="Client ID"
+          />
+          <TextField
+            id="client-secret"
+            name="secret"
+            value={clientId.secret}
+            onChange={handleClientIdUpdate}
+            variant="outlined"
+            label="Client Secret"
+          />
+          <Button
+            color="success"
+            variant="contained"
+            onClick={handleAddClientId}
+            disabled={missingId}
+          >
+            Search Spotify
+          </Button>
+          <DialogContentText>
+            You can get your own client ID and secret by registering with{" "}
+            <Link href="https://developer.spotify.com/">
+              Spotify's developer program.
+            </Link>{" "}
+            Or you can ask Eddie. (If Eddie doesn't know you, there will be many
+            questions.)
+          </DialogContentText>
+        </DialogContent>
       ) : (
         <DialogContent>
-          <Button variant="contained" onClick={() => setShowIdInput(true)}>
+          <TextField
+            id="search-spotify"
+            name="search"
+            key="spotify-search"
+            value={searchTerm}
+            onChange={handleUpdateSearchTerms}
+            variant="outlined"
+            label="Spotify Search"
+          />
+          <Button onClick={() => setShowIdInput(true)}>
             Re-enter Client ID
           </Button>
-          This is the interface for adding a song from Spotify
         </DialogContent>
       )}
     </Dialog>
