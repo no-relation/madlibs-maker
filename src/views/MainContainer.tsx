@@ -453,10 +453,12 @@ const MainContainer = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <AddSongDialog
-        addSongDialogOpen={addSongDialogOpen}
-        setAddSongDialogOpen={setAddSongDialogOpen}
-      />
+      {addSongDialogOpen && (
+        <AddSongDialog
+          addSongDialogOpen={addSongDialogOpen}
+          setAddSongDialogOpen={setAddSongDialogOpen}
+        />
+      )}
     </Box>
   );
 };
