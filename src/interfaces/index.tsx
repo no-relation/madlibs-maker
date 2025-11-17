@@ -12,11 +12,10 @@ export type FillInType = {
 
 export const regexAtWords: RegExp = /@([A-Za-z0-9-_]+)/g;
 
+export const MULTI_FLAG = "-multi";
+
 export const isAtWordRepeated = (atWord: string): boolean => {
-  const atWordArray = atWord.split(/[-_]/g);
-  const lastElement = atWordArray[atWordArray.length - 1];
-  const numberElement = parseInt(lastElement);
-  return !isNaN(numberElement);
+  return atWord.includes(MULTI_FLAG);
 };
 
 export function a11yProps(index: number, name?: string) {
@@ -43,7 +42,12 @@ export function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
-export const resetDialogTypeList = ["storyText", "fillIns", "lineTimings"];
+export const resetDialogTypeList = [
+  "storyText",
+  "fillIns",
+  "lineTimings",
+  "songDemo",
+];
 export type ResetDialogType = (typeof resetDialogTypeList)[number];
 export const isResetDialogType = (str: string): str is ResetDialogType => {
   return resetDialogTypeList.some((t) => str === t);

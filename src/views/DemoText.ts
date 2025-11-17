@@ -9,6 +9,9 @@ const wordLists: FillInType = {
   animal: ["fox", "sloth", "elephant", "seal", "penguin"],
   "imperative-verb": ["jumped", "sidled", "flirted with", "fought"],
   "derogatory-term": ["asshole", "choad", "tit", "knob", "fuckwit"],
+  "body-part": ["mind", "genitals", "finger", "nose"],
+  noun: ["house", "wok", "shoe", "phone", "Stanley cup", "dog"],
+  "synonym-for-sad": ["down", "blue", "bummed", "tired"],
 };
 
 export const getUniqueRandomWord = (
@@ -28,5 +31,5 @@ export const getUniqueRandomWord = (
     return randomWord;
   }
 
-  return "";
+  return fromList;
 };

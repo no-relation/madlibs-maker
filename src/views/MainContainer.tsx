@@ -12,6 +12,7 @@ import {
 import {
   CustomTabPanel,
   FillInType,
+  MULTI_FLAG,
   ResetDialogType,
   a11yProps,
   findResetDialogType,
@@ -29,6 +30,7 @@ import {
   LRC_DATA_BY_SONG,
   SongOption,
   getLrcFile,
+  getLrcFileString,
   getSongOptions,
   saveSongData,
 } from "../interfaces/SongOptions";
@@ -40,6 +42,7 @@ import FinishedStory from "./FinishedStory";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import deepcopy from "deepcopy";
+import { getUniqueRandomWord } from "./DemoText";
 
 const MainContainer = () => {
   const SONG_SELECTION_TITLE = "songSelectionTitle";
@@ -59,8 +62,9 @@ const MainContainer = () => {
   const [useUploadedSongs, setUseUploadedSongs] = useState(true);
   const songOptions = getSongOptions();
   const [songSelection, setSongSelection] = useState<SongOption | undefined>(
-    useUploadedSongs ? getSongSelection : undefined
+    useUploadedSongs ? getSongSelection() : undefined
   );
+  const demoMode: boolean | undefined = songSelection?.demo;
 
   const [lrcFile, setLrcFile] = useState<string | null>(null);
 
@@ -196,7 +200,10 @@ const MainContainer = () => {
     }
   }, [fillIns]);
 
-  useEffect(() => {
+  const updateFillIns = (
+    storyTextArray: string[],
+    title: string | undefined
+  ) => {
     const newFillIns: FillInType = {};
     const storyTextCopy = deepcopy(storyTextInput);
     if (titleTextInput) {
@@ -207,27 +214,35 @@ const MainContainer = () => {
       if (!isNil(atWords)) {
         atWords.forEach((atWord) => {
           const existingKeys = Object.keys(newFillIns);
-          const justWord = atWord.replace("@", "");
-          if (!existingKeys.includes(justWord)) {
-            newFillIns[justWord] = [];
+          const fillInKey = atWord.replace("@", "");
+          if (!existingKeys.includes(fillInKey)) {
+            newFillIns[fillInKey] = [];
           }
-          if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
+          if (
+            isAtWordRepeated(fillInKey) &&
+            newFillIns[fillInKey].length === 1
+          ) {
             return;
-            // } else if (isEqual(storyTextInput, getParsedLyrics(demoStoryText))) {
-            //   const randomWord = getUniqueRandomWord(justWord);
-            //   newFillIns[justWord].push(randomWord);
+          } else if (demoMode) {
+            const cleanedFillInKey = fillInKey.replace(MULTI_FLAG, "");
+            const randomWord = getUniqueRandomWord(cleanedFillInKey);
+            newFillIns[fillInKey].push(randomWord);
           } else {
-            if (fillIns && Object.keys(fillIns).includes(justWord)) {
-              const oldIndex = newFillIns[justWord].length;
-              newFillIns[justWord][oldIndex] = fillIns[justWord][oldIndex];
+            if (fillIns && Object.keys(fillIns).includes(fillInKey)) {
+              const oldIndex = newFillIns[fillInKey].length;
+              newFillIns[fillInKey][oldIndex] = fillIns[fillInKey][oldIndex];
             } else {
-              newFillIns[justWord].push("");
+              newFillIns[fillInKey].push("");
             }
           }
         });
       }
     });
     setFillIns(newFillIns);
+  };
+
+  useEffect(() => {
+    updateFillIns(storyTextInput, titleTextInput);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, titleTextInput]);
 
@@ -245,16 +260,31 @@ const MainContainer = () => {
   >(undefined);
   const [resetDialogText, setResetDialogText] = useState("");
 
-  const handleResetTextClick = () => {
-    setResetDialogType("storyText");
+  // const handleResetTextClick = () => {
+  //   setResetDialogType("storyText");
+  //   setResetDialogText(
+  //     "Are you sure you want to reset to the demo text? You will lose your story!"
+  //   );
+  // };
+
+  const handleSongDemoClick = () => {
+    setResetDialogType("songDemo");
     setResetDialogText(
-      "Are you sure you want to reset to the demo text? You will lose your story!"
+      "Are you sure you want to reload demonstration mode? You will lose any changes!"
     );
   };
 
   const handleResetFillIns = () => {
     setResetDialogType("fillIns");
-    setResetDialogText("Are you certain you want to reset the fill-in words?");
+    if (demoMode) {
+      setResetDialogText(
+        "Do you want to get a new batch of random fill-in words?"
+      );
+    } else {
+      setResetDialogText(
+        "Are you certain you want to reset the fill-in words?"
+      );
+    }
   };
 
   const handleResetLineTimings = () => {
@@ -319,12 +349,25 @@ const MainContainer = () => {
     },
   ];
 
-  const ResetTab = styled(() => (
+  // for story functionality that isn't used anymore
+  // const ResetTab = styled(() => (
+  //   <Tab
+  //     key="reset"
+  //     style={resetStyle}
+  //     label="Reset to Demo"
+  //     onClick={handleResetTextClick}
+  //   />
+  // ))(() => ({
+  //   backgroundColor: "green",
+  //   color: "white",
+  // }));
+
+  const SongDemo = styled(() => (
     <Tab
       key="reset"
       style={resetStyle}
-      label="Reset to Demo"
-      onClick={handleResetTextClick}
+      label="Reset Demo"
+      onClick={handleSongDemoClick}
     />
   ))(() => ({
     backgroundColor: "green",
@@ -345,12 +388,32 @@ const MainContainer = () => {
           resetStoryText();
           break;
         case "fillIns":
-          resetFillIns();
+          if (demoMode) {
+            updateFillIns(storyTextInput, titleTextInput);
+          } else {
+            resetFillIns();
+          }
           break;
         case "lineTimings":
           resetLineTimings();
           break;
+        case "songDemo":
+          resetSongDemo();
+          break;
       }
+    }
+  };
+
+  const resetSongDemo = () => {
+    if (songSelection) {
+      const getLrc = async () => {
+        const originalLrcFile = await getLrcFileString(songSelection.lrcFile);
+        if (originalLrcFile) {
+          saveSongData(songSelection.title, originalLrcFile);
+          setLrcFile(originalLrcFile);
+        }
+      };
+      getLrc();
     }
   };
 
@@ -424,8 +487,8 @@ const MainContainer = () => {
           scrollButtons="auto"
         >
           {tabValues.map((tabValue, idx) => {
-            if (tabValue.name === "reset") {
-              return <ResetTab key="reset" />;
+            if (tabValue.name === "reset" && demoMode) {
+              return <SongDemo key="reset" />;
             } else {
               return (
                 <Tab

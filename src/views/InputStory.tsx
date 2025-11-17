@@ -30,6 +30,7 @@ import { fromMs, toMs } from "hh-mm-ss";
 import { isEmpty, isEqual, parseInt, toNumber } from "lodash";
 
 import { DuetPart } from "../interfaces/LrcFileParser";
+import { MULTI_FLAG } from "../interfaces";
 import { SongOption } from "../interfaces/SongOptions";
 import deepcopy from "deepcopy";
 import { findDuetPartColor } from "./ShowStyles";
@@ -381,7 +382,8 @@ const InputStory = (props: InputStoryProps) => {
       <Typography component="h6">
         To use, paste in whatever text you like, but replace whatever words you
         want to MadLib with the type of word, starting with an @. You can
-        hyphenate or underscore multiple "@-words", but no spaces.
+        hyphenate or underscore multiple "@-words", but no spaces. To replace
+        with the same word multiple times, add "{MULTI_FLAG}" to the end
       </Typography>
       <Box sx={{ display: "flex", padding: "1em" }}>
         <FormControlLabel
