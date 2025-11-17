@@ -26,12 +26,33 @@ const rawSongOptions: SongOption[] = [
     songFile:
       dataFolders + "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart.mp3",
   },
+  {
+    artist: "Elton John and Kiki Dee",
+    title: "Don't Go Breaking My Heart (Demo)",
+    lrcFile:
+      dataFolders +
+      "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart_demo.lrc",
+    songFile:
+      dataFolders + "Dont_go_breaking_my_heart/Dont_go_breaking_my_heart.mp3",
+    demo: true,
+    order: 1,
+  },
 ];
 
-export const getSongOptions = (): SongOption[] => {
-  return rawSongOptions.map(
-    (opt) => new SongOption(opt.artist, opt.title, opt.lrcFile, opt.songFile)
+export const getSongOptions = (demo?: boolean): SongOption[] => {
+  const songOptions = rawSongOptions.filter((opt) => !opt.hide); // && opt.demo === demo)
+  songOptions.sort((a, b) => songOptionSort(a, b));
+  return songOptions.map(
+    (opt) =>
+      new SongOption(opt.artist, opt.title, opt.lrcFile, opt.songFile, opt.demo)
   );
+};
+
+const songOptionSort = (a: SongOption, b: SongOption): number => {
+  const aOrder = a.order || 1000;
+  const bOrder = b.order || 1000;
+
+  return aOrder - bOrder;
 };
 
 export const getLrcFileString = async (lrcFileName: string) => {
@@ -51,18 +72,23 @@ export class SongOption {
   lrcText?: string;
   songFile: string;
   displayTitle?: string;
+  demo?: boolean;
+  hide?: boolean;
+  order?: number;
 
   constructor(
     artist: string,
     title: string,
     lrcFile: string,
-    songFile: string
+    songFile: string,
+    demo?: boolean
   ) {
     this.artist = artist;
     this.title = title;
     this.lrcFile = lrcFile;
     this.songFile = songFile;
     this.displayTitle = `${this.title} - ${this.artist}`;
+    this.demo = demo;
   }
 }
 

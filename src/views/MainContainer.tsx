@@ -12,6 +12,7 @@ import {
 import {
   CustomTabPanel,
   FillInType,
+  MULTI_FLAG,
   ResetDialogType,
   a11yProps,
   findResetDialogType,
@@ -40,6 +41,7 @@ import FinishedStory from "./FinishedStory";
 import InputStory from "./InputStory";
 import WordList from "./WordList";
 import deepcopy from "deepcopy";
+import { getUniqueRandomWord } from "./DemoText";
 
 const MainContainer = () => {
   const SONG_SELECTION_TITLE = "songSelectionTitle";
@@ -59,8 +61,9 @@ const MainContainer = () => {
   const [useUploadedSongs, setUseUploadedSongs] = useState(true);
   const songOptions = getSongOptions();
   const [songSelection, setSongSelection] = useState<SongOption | undefined>(
-    useUploadedSongs ? getSongSelection : undefined
+    useUploadedSongs ? getSongSelection() : undefined
   );
+  const demoMode: boolean | undefined = songSelection?.demo;
 
   const [lrcFile, setLrcFile] = useState<string | null>(null);
 
@@ -207,21 +210,25 @@ const MainContainer = () => {
       if (!isNil(atWords)) {
         atWords.forEach((atWord) => {
           const existingKeys = Object.keys(newFillIns);
-          const justWord = atWord.replace("@", "");
-          if (!existingKeys.includes(justWord)) {
-            newFillIns[justWord] = [];
+          const fillInKey = atWord.replace("@", "");
+          if (!existingKeys.includes(fillInKey)) {
+            newFillIns[fillInKey] = [];
           }
-          if (isAtWordRepeated(justWord) && newFillIns[justWord].length === 1) {
+          if (
+            isAtWordRepeated(fillInKey) &&
+            newFillIns[fillInKey].length === 1
+          ) {
             return;
-            // } else if (isEqual(storyTextInput, getParsedLyrics(demoStoryText))) {
-            //   const randomWord = getUniqueRandomWord(justWord);
-            //   newFillIns[justWord].push(randomWord);
+          } else if (demoMode) {
+            const cleanedFillInKey = fillInKey.replace(MULTI_FLAG, "");
+            const randomWord = getUniqueRandomWord(cleanedFillInKey);
+            newFillIns[fillInKey].push(randomWord);
           } else {
-            if (fillIns && Object.keys(fillIns).includes(justWord)) {
-              const oldIndex = newFillIns[justWord].length;
-              newFillIns[justWord][oldIndex] = fillIns[justWord][oldIndex];
+            if (fillIns && Object.keys(fillIns).includes(fillInKey)) {
+              const oldIndex = newFillIns[fillInKey].length;
+              newFillIns[fillInKey][oldIndex] = fillIns[fillInKey][oldIndex];
             } else {
-              newFillIns[justWord].push("");
+              newFillIns[fillInKey].push("");
             }
           }
         });
@@ -245,10 +252,17 @@ const MainContainer = () => {
   >(undefined);
   const [resetDialogText, setResetDialogText] = useState("");
 
-  const handleResetTextClick = () => {
-    setResetDialogType("storyText");
+  // const handleResetTextClick = () => {
+  //   setResetDialogType("storyText");
+  //   setResetDialogText(
+  //     "Are you sure you want to reset to the demo text? You will lose your story!"
+  //   );
+  // };
+
+  const handleSongDemoClick = () => {
+    setResetDialogType("songDemo");
     setResetDialogText(
-      "Are you sure you want to reset to the demo text? You will lose your story!"
+      "Are you sure you want to reload demonstration mode? You will lose any changes!"
     );
   };
 
@@ -319,12 +333,25 @@ const MainContainer = () => {
     },
   ];
 
-  const ResetTab = styled(() => (
+  // for story functionality that isn't used anymore
+  // const ResetTab = styled(() => (
+  //   <Tab
+  //     key="reset"
+  //     style={resetStyle}
+  //     label="Reset to Demo"
+  //     onClick={handleResetTextClick}
+  //   />
+  // ))(() => ({
+  //   backgroundColor: "green",
+  //   color: "white",
+  // }));
+
+  const SongDemo = styled(() => (
     <Tab
       key="reset"
       style={resetStyle}
-      label="Reset to Demo"
-      onClick={handleResetTextClick}
+      label="Reset Demo"
+      onClick={handleSongDemoClick}
     />
   ))(() => ({
     backgroundColor: "green",
@@ -350,8 +377,22 @@ const MainContainer = () => {
         case "lineTimings":
           resetLineTimings();
           break;
+        case "songDemo":
+          resetSongDemo();
+          break;
       }
     }
+  };
+
+  const resetSongDemo = () => {
+    // setDemoMode(true);
+    // TODO: reset text only for all song options where demo: true
+    // let demoSongOptions = getSongOptions(true);
+    // if (demoSongOptions.length === 0) {
+    //   demoSongOptions = getSongOptions();
+    // }
+    // setSongSelection(demoSongOptions[0]);
+    // resetStoryText();
   };
 
   const resetStoryText = () => {
@@ -425,7 +466,7 @@ const MainContainer = () => {
         >
           {tabValues.map((tabValue, idx) => {
             if (tabValue.name === "reset") {
-              return <ResetTab key="reset" />;
+              return <SongDemo key="reset" />;
             } else {
               return (
                 <Tab

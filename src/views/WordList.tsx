@@ -7,10 +7,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { FillInType, isAtWordRepeated } from "../interfaces";
 import React, { useEffect, useState } from "react";
 import { isNaN, startCase, toLower } from "lodash";
 
-import { FillInType } from "../interfaces";
 import deepcopy from "deepcopy";
 import { resetStyle } from "./ShowStyles";
 
@@ -49,7 +49,13 @@ const WordList = (props: WordListProps) => {
 
   const renderWordType = (wordType: string) => {
     const dashesRemoved = wordType.replace("-", " ").replace("_", " ");
-    const capitalized = startCase(toLower(dashesRemoved));
+    let capitalized = startCase(toLower(dashesRemoved));
+    if (isAtWordRepeated(wordType)) {
+      const wordArray = capitalized.split(" ");
+      wordArray.splice(wordArray.length - 1, 1, "(multiple)");
+      capitalized = wordArray.join(" ");
+    }
+
     return capitalized;
   };
 
