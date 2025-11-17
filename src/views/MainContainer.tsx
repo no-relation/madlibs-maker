@@ -30,6 +30,7 @@ import {
   LRC_DATA_BY_SONG,
   SongOption,
   getLrcFile,
+  getLrcFileString,
   getSongOptions,
   saveSongData,
 } from "../interfaces/SongOptions";
@@ -199,7 +200,10 @@ const MainContainer = () => {
     }
   }, [fillIns]);
 
-  useEffect(() => {
+  const updateFillIns = (
+    storyTextArray: string[],
+    title: string | undefined
+  ) => {
     const newFillIns: FillInType = {};
     const storyTextCopy = deepcopy(storyTextInput);
     if (titleTextInput) {
@@ -235,6 +239,10 @@ const MainContainer = () => {
       }
     });
     setFillIns(newFillIns);
+  };
+
+  useEffect(() => {
+    updateFillIns(storyTextInput, titleTextInput);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storyTextInput, titleTextInput]);
 
@@ -268,7 +276,15 @@ const MainContainer = () => {
 
   const handleResetFillIns = () => {
     setResetDialogType("fillIns");
-    setResetDialogText("Are you certain you want to reset the fill-in words?");
+    if (demoMode) {
+      setResetDialogText(
+        "Do you want to get a new batch of random fill-in words?"
+      );
+    } else {
+      setResetDialogText(
+        "Are you certain you want to reset the fill-in words?"
+      );
+    }
   };
 
   const handleResetLineTimings = () => {
@@ -372,7 +388,11 @@ const MainContainer = () => {
           resetStoryText();
           break;
         case "fillIns":
-          resetFillIns();
+          if (demoMode) {
+            updateFillIns(storyTextInput, titleTextInput);
+          } else {
+            resetFillIns();
+          }
           break;
         case "lineTimings":
           resetLineTimings();
@@ -385,14 +405,16 @@ const MainContainer = () => {
   };
 
   const resetSongDemo = () => {
-    // setDemoMode(true);
-    // TODO: reset text only for all song options where demo: true
-    // let demoSongOptions = getSongOptions(true);
-    // if (demoSongOptions.length === 0) {
-    //   demoSongOptions = getSongOptions();
-    // }
-    // setSongSelection(demoSongOptions[0]);
-    // resetStoryText();
+    if (songSelection) {
+      const getLrc = async () => {
+        const originalLrcFile = await getLrcFileString(songSelection.lrcFile);
+        if (originalLrcFile) {
+          saveSongData(songSelection.title, originalLrcFile);
+          setLrcFile(originalLrcFile);
+        }
+      };
+      getLrc();
+    }
   };
 
   const resetStoryText = () => {
@@ -465,7 +487,7 @@ const MainContainer = () => {
           scrollButtons="auto"
         >
           {tabValues.map((tabValue, idx) => {
-            if (tabValue.name === "reset") {
+            if (tabValue.name === "reset" && demoMode) {
               return <SongDemo key="reset" />;
             } else {
               return (

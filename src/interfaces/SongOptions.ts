@@ -126,22 +126,22 @@ export const getLrcFile = async (
   songSelection: SongOption
 ): Promise<string | null | undefined> => {
   let fileString = localStorage.getItem(LRC_DATA_BY_SONG);
-  let songDatas: SongDataLocalStorage[] = [];
-  let songData: SongDataLocalStorage | undefined;
+  let songData: SongDataLocalStorage[] = [];
+  let songDatum: SongDataLocalStorage | undefined;
 
   if (!isNil(fileString) && !isEmpty(fileString)) {
-    songDatas = JSON.parse(fileString);
+    songData = JSON.parse(fileString);
   }
   if (songSelection) {
-    songData = songDatas.find((d) => d.songTitle === songSelection.title);
-    if (songData === undefined) {
+    songDatum = songData.find((d) => d.songTitle === songSelection.title);
+    if (songDatum === undefined) {
       const lrcFileString = await getLrcFileString(songSelection.lrcFile);
       if (lrcFileString) {
         saveSongData(songSelection.title, lrcFileString);
         return lrcFileString;
       }
     } else {
-      return songData.lrcFileString;
+      return songDatum.lrcFileString;
     }
   }
 };
