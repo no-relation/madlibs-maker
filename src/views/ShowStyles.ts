@@ -65,6 +65,8 @@ export const getShowStyle = (name: string): ShowStyle => {
           process.env.PUBLIC_URL + `/images/${showStyleValues?.backgroundImage}`
         })`,
         background: showStyleValues!.background,
+        backgroundPosition: showStyleValues!.backgroundPosition || "inherit",
+        backgroundSize: showStyleValues!.backgroundSize || "inherit",
         display: "flex",
         flexWrap: "nowrap",
         justifyContent: "space-between",
@@ -75,7 +77,7 @@ export const getShowStyle = (name: string): ShowStyle => {
         textAlign: "center",
         backgroundColor: showStyleValues!.presentsTitle.backgroundColor,
         borderRadius: "20px",
-        textShadow: "5px 5px 7px black",
+        textShadow: `5px 5px 7px ${showStyleValues!.presentsTitle.textShadowColor || "black"}`,
         color: showStyleValues!.presentsTitle.color,
         margin: "auto",
         padding: "0 0.5em",
@@ -102,6 +104,7 @@ const showStyles = [
     name: "base",
     backgroundImage: "eq_bkgnd.png",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "rgb(236 30 121)",
       color: "white",
@@ -115,6 +118,7 @@ const showStyles = [
     name: "christmas",
     backgroundImage: "snowflakes-554635_1920.jpg",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "green",
       color: "white",
@@ -125,9 +129,27 @@ const showStyles = [
     },
   },
   {
+    name: "halloween",
+    backgroundImage: "pumpkin-cropped.jpg",
+    background: null,
+    backgroundPosition: "right",
+    // backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    presentsTitle: {
+      backgroundColor: "yellow",
+      color: "crimson",
+      textShadowColor: "gray",
+    },
+    mainTitle: {
+      backgroundColor: "orange",
+      color: "white",
+    },
+  },
+  {
     name: "valentines",
     backgroundImage: "ValentinesDayBackgroundDesktopWallpaper.jpg",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "pink",
       color: "white",

@@ -451,7 +451,7 @@ const MainContainer = () => {
     }
   };
 
-  const showStyle = getShowStyle("base");
+  const showStyle = getShowStyle("halloween");
   const { header } = showStyle;
   const { mainTitle, presentsTitle, root, logo } = header;
 
