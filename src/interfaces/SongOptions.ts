@@ -4,6 +4,14 @@ const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
   {
+    artist: "Theme Music",
+    title: "Addams Family (TV show)",
+    lrcFile: dataFolders + "Addams_Family_Theme/The Addams Family Theme.lrc",
+    songFile:
+      dataFolders +
+      "Addams_Family_Theme/The Addams Family - Theme Song (Karaoke Version) - trimmed.mp3",
+  },
+  {
     artist: "They Might Be Giants",
     title: "Birdhouse In Your Soul",
     lrcFile:
@@ -44,7 +52,13 @@ export const getSongOptions = (demo?: boolean): SongOption[] => {
   songOptions.sort((a, b) => songOptionSort(a, b));
   return songOptions.map(
     (opt) =>
-      new SongOption(opt.artist, opt.title, opt.lrcFile, opt.songFile, opt.demo)
+      new SongOption(
+        opt.artist,
+        opt.title,
+        opt.lrcFile,
+        opt.songFile,
+        opt.demo,
+      ),
   );
 };
 
@@ -81,7 +95,7 @@ export class SongOption {
     title: string,
     lrcFile: string,
     songFile: string,
-    demo?: boolean
+    demo?: boolean,
   ) {
     this.artist = artist;
     this.title = title;
@@ -109,7 +123,7 @@ export const saveSongData = (songTitle: string, lrcFileString: string) => {
   if (localStored) {
     songDatas = JSON.parse(localStored);
     const foundDataIdx = songDatas.findIndex(
-      (d) => d.songTitle === songData.songTitle
+      (d) => d.songTitle === songData.songTitle,
     );
     if (foundDataIdx === -1) {
       songDatas.push(songData);
@@ -123,7 +137,7 @@ export const saveSongData = (songTitle: string, lrcFileString: string) => {
 };
 
 export const getLrcFile = async (
-  songSelection: SongOption
+  songSelection: SongOption,
 ): Promise<string | null | undefined> => {
   let fileString = localStorage.getItem(LRC_DATA_BY_SONG);
   let songData: SongDataLocalStorage[] = [];
