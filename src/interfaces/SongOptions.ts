@@ -1,8 +1,37 @@
 import { isEmpty, isNil } from "lodash";
 
+import { ThemePick } from "../views/ShowStyles";
+
 const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
+  {
+    artist: "Michael Jackson",
+    title: "Thriller",
+    lrcFile: dataFolders + "Thriller/Thriller.lrc",
+    songFile:
+      dataFolders +
+      "Thriller/Michael Jackson - Thriller (Karaoke Version) - trimmed.mp3",
+    theme: "halloween",
+  },
+  {
+    artist: "Oingo Boingo",
+    title: "Dead Man's Party",
+    lrcFile: dataFolders + "Dead_Mans_Party/Dead_Mans_Party.lrc",
+    songFile:
+      dataFolders +
+      "Dead_Mans_Party/Oingo Boingo - Dead Man's Party (Karaoke Version) - trimmed.mp3",
+    theme: "halloween",
+  },
+  {
+    artist: "Theme Music",
+    title: "Addams Family (TV show)",
+    lrcFile: dataFolders + "Addams_Family_Theme/The Addams Family Theme.lrc",
+    songFile:
+      dataFolders +
+      "Addams_Family_Theme/The Addams Family - Theme Song (Karaoke Version) - trimmed.mp3",
+    theme: "halloween",
+  },
   {
     artist: "They Might Be Giants",
     title: "Birdhouse In Your Soul",
@@ -39,12 +68,20 @@ const rawSongOptions: SongOption[] = [
   },
 ];
 
-export const getSongOptions = (demo?: boolean): SongOption[] => {
-  const songOptions = rawSongOptions.filter((opt) => !opt.hide); // && opt.demo === demo)
+export const getSongOptions = (theme?: ThemePick): SongOption[] => {
+  const songOptions = rawSongOptions.filter(
+    (opt) => !opt.hide && (theme === undefined || opt.theme === theme),
+  );
   songOptions.sort((a, b) => songOptionSort(a, b));
   return songOptions.map(
     (opt) =>
-      new SongOption(opt.artist, opt.title, opt.lrcFile, opt.songFile, opt.demo)
+      new SongOption(
+        opt.artist,
+        opt.title,
+        opt.lrcFile,
+        opt.songFile,
+        opt.demo,
+      ),
   );
 };
 
@@ -75,13 +112,15 @@ export class SongOption {
   demo?: boolean;
   hide?: boolean;
   order?: number;
+  theme?: ThemePick;
 
   constructor(
     artist: string,
     title: string,
     lrcFile: string,
     songFile: string,
-    demo?: boolean
+    demo?: boolean,
+    theme?: ThemePick,
   ) {
     this.artist = artist;
     this.title = title;
@@ -89,6 +128,7 @@ export class SongOption {
     this.songFile = songFile;
     this.displayTitle = `${this.title} - ${this.artist}`;
     this.demo = demo;
+    this.theme = theme;
   }
 }
 
@@ -109,7 +149,7 @@ export const saveSongData = (songTitle: string, lrcFileString: string) => {
   if (localStored) {
     songDatas = JSON.parse(localStored);
     const foundDataIdx = songDatas.findIndex(
-      (d) => d.songTitle === songData.songTitle
+      (d) => d.songTitle === songData.songTitle,
     );
     if (foundDataIdx === -1) {
       songDatas.push(songData);
@@ -123,7 +163,7 @@ export const saveSongData = (songTitle: string, lrcFileString: string) => {
 };
 
 export const getLrcFile = async (
-  songSelection: SongOption
+  songSelection: SongOption,
 ): Promise<string | null | undefined> => {
   let fileString = localStorage.getItem(LRC_DATA_BY_SONG);
   let songData: SongDataLocalStorage[] = [];

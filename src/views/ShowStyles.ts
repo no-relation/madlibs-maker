@@ -39,6 +39,8 @@ export const resetStyle: React.CSSProperties = {
   color: "white",
 };
 
+export type ThemePick = "base" | "christmas" | "valentines" | "halloween";
+
 interface ShowStyle {
   header: {
     logo: SxProps;
@@ -48,7 +50,7 @@ interface ShowStyle {
   };
 }
 
-export const getShowStyle = (name: string): ShowStyle => {
+export const getShowStyle = (name: ThemePick): ShowStyle => {
   let showStyleValues = showStyles.find((ss) => ss.name === name);
   if (!showStyleValues) {
     showStyleValues = showStyles.find((ss) => ss.name === "base");
@@ -65,6 +67,8 @@ export const getShowStyle = (name: string): ShowStyle => {
           process.env.PUBLIC_URL + `/images/${showStyleValues?.backgroundImage}`
         })`,
         background: showStyleValues!.background,
+        backgroundPosition: showStyleValues!.backgroundPosition || "inherit",
+        backgroundSize: showStyleValues!.backgroundSize || "inherit",
         display: "flex",
         flexWrap: "nowrap",
         justifyContent: "space-between",
@@ -75,7 +79,7 @@ export const getShowStyle = (name: string): ShowStyle => {
         textAlign: "center",
         backgroundColor: showStyleValues!.presentsTitle.backgroundColor,
         borderRadius: "20px",
-        textShadow: "5px 5px 7px black",
+        textShadow: `5px 5px 7px ${showStyleValues!.presentsTitle.textShadowColor || "black"}`,
         color: showStyleValues!.presentsTitle.color,
         margin: "auto",
         padding: "0 0.5em",
@@ -99,9 +103,10 @@ export const getShowStyle = (name: string): ShowStyle => {
 
 const showStyles = [
   {
-    name: "base",
+    name: "base" as ThemePick,
     backgroundImage: "eq_bkgnd.png",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "rgb(236 30 121)",
       color: "white",
@@ -112,9 +117,10 @@ const showStyles = [
     },
   },
   {
-    name: "christmas",
+    name: "christmas" as ThemePick,
     backgroundImage: "snowflakes-554635_1920.jpg",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "green",
       color: "white",
@@ -125,9 +131,27 @@ const showStyles = [
     },
   },
   {
-    name: "valentines",
+    name: "halloween" as ThemePick,
+    backgroundImage: "pumpkin-cropped.jpg",
+    background: null,
+    backgroundPosition: "right",
+    // backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    presentsTitle: {
+      backgroundColor: "yellow",
+      color: "crimson",
+      textShadowColor: "gray",
+    },
+    mainTitle: {
+      backgroundColor: "orange",
+      color: "white",
+    },
+  },
+  {
+    name: "valentines" as ThemePick,
     backgroundImage: "ValentinesDayBackgroundDesktopWallpaper.jpg",
     background: null,
+    // backgroundPosition: null,
     presentsTitle: {
       backgroundColor: "pink",
       color: "white",
