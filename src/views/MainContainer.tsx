@@ -35,7 +35,7 @@ import {
   saveSongData,
 } from "../interfaces/SongOptions";
 import React, { useEffect, useRef, useState } from "react";
-import { getShowStyle, resetStyle } from "./ShowStyles";
+import { ThemePick, getShowStyle, resetStyle } from "./ShowStyles";
 import { isEmpty, isEqual, isNil } from "lodash";
 
 import FinishedStory from "./FinishedStory";
@@ -49,6 +49,7 @@ const MainContainer = () => {
   const STORY_TEXT_KEY = "storyText";
   const TITLE_TEXT_KEY = "titleText";
   const FILLINS_KEY = "fillins";
+  const THEME_PICK: ThemePick = "halloween";
 
   const getSongSelection = (): SongOption | undefined => {
     const storedSongSelectionTitle = localStorage.getItem(SONG_SELECTION_TITLE);
@@ -60,9 +61,9 @@ const MainContainer = () => {
   };
 
   const [useUploadedSongs, setUseUploadedSongs] = useState(true);
-  const songOptions = getSongOptions();
+  const songOptions = getSongOptions(THEME_PICK);
   const [songSelection, setSongSelection] = useState<SongOption | undefined>(
-    useUploadedSongs ? getSongSelection() : undefined
+    useUploadedSongs ? getSongSelection() : undefined,
   );
   const demoMode: boolean | undefined = songSelection?.demo;
 
@@ -73,7 +74,7 @@ const MainContainer = () => {
     Array<number | undefined> | undefined
   >(undefined);
   const [titleTextInput, setTitleTextInput] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [duetParts, setDuetParts] = useState<DuetPart[]>([]);
 
@@ -127,7 +128,7 @@ const MainContainer = () => {
   useEffect(() => {
     const songDidChange: boolean = !isEqual(
       previousSongSelection,
-      songSelection
+      songSelection,
     );
     const titleText = getTitleText(titleTextInput, songDidChange);
     // // for dev
@@ -138,7 +139,7 @@ const MainContainer = () => {
         storyTextInput,
         lineTimingInput,
         duetParts,
-        titleText
+        titleText,
       );
       if (songSelection) {
         saveSongData(songSelection.title, lrcFileString);
@@ -162,7 +163,7 @@ const MainContainer = () => {
 
   const getTitleText = (
     titleTextInput?: string,
-    getOriginalTitle?: boolean
+    getOriginalTitle?: boolean,
   ): string | undefined => {
     const titleFromLrc = getTitle(lrcFile);
     if (getOriginalTitle) {
@@ -202,7 +203,7 @@ const MainContainer = () => {
 
   const updateFillIns = (
     storyTextArray: string[],
-    title: string | undefined
+    title: string | undefined,
   ) => {
     const newFillIns: FillInType = {};
     const storyTextCopy = deepcopy(storyTextInput);
@@ -270,7 +271,7 @@ const MainContainer = () => {
   const handleSongDemoClick = () => {
     setResetDialogType("songDemo");
     setResetDialogText(
-      "Are you sure you want to reload demonstration mode? You will lose any changes!"
+      "Are you sure you want to reload demonstration mode? You will lose any changes!",
     );
   };
 
@@ -278,11 +279,11 @@ const MainContainer = () => {
     setResetDialogType("fillIns");
     if (demoMode) {
       setResetDialogText(
-        "Do you want to get a new batch of random fill-in words?"
+        "Do you want to get a new batch of random fill-in words?",
       );
     } else {
       setResetDialogText(
-        "Are you certain you want to reset the fill-in words?"
+        "Are you certain you want to reset the fill-in words?",
       );
     }
   };
@@ -375,7 +376,7 @@ const MainContainer = () => {
   }));
 
   const handleResetDialogClose = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     const { name } = event.currentTarget;
     const confirm = name.includes("yes");
@@ -442,7 +443,7 @@ const MainContainer = () => {
 
   const handleTabChange = (
     event: React.SyntheticEvent<Element, Event>,
-    newValue: number
+    newValue: number,
   ) => {
     if ((event.target as any).name === "reset-tab") {
       return;
@@ -451,7 +452,7 @@ const MainContainer = () => {
     }
   };
 
-  const showStyle = getShowStyle("halloween");
+  const showStyle = getShowStyle(THEME_PICK);
   const { header } = showStyle;
   const { mainTitle, presentsTitle, root, logo } = header;
 

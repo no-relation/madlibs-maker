@@ -39,6 +39,8 @@ export const resetStyle: React.CSSProperties = {
   color: "white",
 };
 
+export type ThemePick = "base" | "christmas" | "valentines" | "halloween";
+
 interface ShowStyle {
   header: {
     logo: SxProps;
@@ -48,7 +50,7 @@ interface ShowStyle {
   };
 }
 
-export const getShowStyle = (name: string): ShowStyle => {
+export const getShowStyle = (name: ThemePick): ShowStyle => {
   let showStyleValues = showStyles.find((ss) => ss.name === name);
   if (!showStyleValues) {
     showStyleValues = showStyles.find((ss) => ss.name === "base");
@@ -101,7 +103,7 @@ export const getShowStyle = (name: string): ShowStyle => {
 
 const showStyles = [
   {
-    name: "base",
+    name: "base" as ThemePick,
     backgroundImage: "eq_bkgnd.png",
     background: null,
     // backgroundPosition: null,
@@ -115,7 +117,7 @@ const showStyles = [
     },
   },
   {
-    name: "christmas",
+    name: "christmas" as ThemePick,
     backgroundImage: "snowflakes-554635_1920.jpg",
     background: null,
     // backgroundPosition: null,
@@ -129,7 +131,7 @@ const showStyles = [
     },
   },
   {
-    name: "halloween",
+    name: "halloween" as ThemePick,
     backgroundImage: "pumpkin-cropped.jpg",
     background: null,
     backgroundPosition: "right",
@@ -146,7 +148,7 @@ const showStyles = [
     },
   },
   {
-    name: "valentines",
+    name: "valentines" as ThemePick,
     backgroundImage: "ValentinesDayBackgroundDesktopWallpaper.jpg",
     background: null,
     // backgroundPosition: null,
