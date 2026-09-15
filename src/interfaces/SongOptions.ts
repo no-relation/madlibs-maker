@@ -15,6 +15,15 @@ const rawSongOptions: SongOption[] = [
     theme: "halloween",
   },
   {
+    artist: "Ray Parker Jr",
+    title: "Ghostbusters",
+    lrcFile: dataFolders + "Ghostbusters/Ghostbusters.lrc",
+    songFile:
+      dataFolders +
+      "Ghostbusters/Ray Parker Jr. - Ghostbusters (Karaoke Version) - trimmed.mp3",
+    theme: "halloween",
+  },
+  {
     artist: "Oingo Boingo",
     title: "Dead Man's Party",
     lrcFile: dataFolders + "Dead_Mans_Party/Dead_Mans_Party.lrc",
