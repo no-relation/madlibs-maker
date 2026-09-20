@@ -6,6 +6,33 @@ const dataFolders = process.env.PUBLIC_URL + "/musicSrc/";
 
 const rawSongOptions: SongOption[] = [
   {
+    artist: "The Rolling Stones",
+    title: "Sympathy For The Devil",
+    lrcFile: dataFolders + "Sympathy_for_the_Devil/Sympathy_for_the_Devil.lrc",
+    songFile:
+      dataFolders +
+      "Sympathy_for_the_Devil/The Rolling Stones - Sympathy For The Devil [KARAOKE].mp3",
+    theme: "halloween",
+  },
+  {
+    artist: "Warren Zevon",
+    title: "Werewolves Of London",
+    lrcFile: dataFolders + "Werewolves_of_London/Werewolves_of_London.lrc",
+    songFile:
+      dataFolders +
+      "Werewolves_of_London/Warren Zevon - Werewolves Of London - Karaoke - trimmed.mp3",
+    theme: "halloween",
+  },
+  {
+    artist: "Britney Spears",
+    title: "Toxic",
+    lrcFile: dataFolders + "Toxic/Toxic.lrc",
+    songFile:
+      dataFolders +
+      "Toxic/Britney Spears - Toxic (Karaoke Version) - trimmed.mp3",
+    theme: "halloween",
+  },
+  {
     artist: "Michael Jackson",
     title: "Thriller",
     lrcFile: dataFolders + "Thriller/Thriller.lrc",
@@ -13,42 +40,6 @@ const rawSongOptions: SongOption[] = [
       dataFolders +
       "Thriller/Michael Jackson - Thriller (Karaoke Version) - trimmed.mp3",
     theme: "halloween",
-  },
-  {
-    artist: "Ray Parker Jr",
-    title: "Ghostbusters",
-    lrcFile: dataFolders + "Ghostbusters/Ghostbusters.lrc",
-    songFile:
-      dataFolders +
-      "Ghostbusters/Ray Parker Jr. - Ghostbusters (Karaoke Version) - trimmed.mp3",
-    theme: "halloween",
-  },
-  {
-    artist: "Oingo Boingo",
-    title: "Dead Man's Party",
-    lrcFile: dataFolders + "Dead_Mans_Party/Dead_Mans_Party.lrc",
-    songFile:
-      dataFolders +
-      "Dead_Mans_Party/Oingo Boingo - Dead Man's Party (Karaoke Version) - trimmed.mp3",
-    theme: "halloween",
-  },
-  {
-    artist: "Theme Music",
-    title: "Addams Family (TV show)",
-    lrcFile: dataFolders + "Addams_Family_Theme/The Addams Family Theme.lrc",
-    songFile:
-      dataFolders +
-      "Addams_Family_Theme/The Addams Family - Theme Song (Karaoke Version) - trimmed.mp3",
-    theme: "halloween",
-  },
-  {
-    artist: "They Might Be Giants",
-    title: "Birdhouse In Your Soul",
-    lrcFile:
-      dataFolders +
-      "Birdhouse_In_Your_Soul/They Might Be Giants - Birdhouse In Your Soul.lrc",
-    songFile:
-      dataFolders + "Birdhouse_In_Your_Soul/02 Birdhouse In Your Soul.mp3",
   },
   {
     artist: "Bill Medley & Jennifer Warnes",
